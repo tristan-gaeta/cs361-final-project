@@ -1,0 +1,22 @@
+{
+  "name": "cs361-final-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tristan-gaeta/cs361-final-project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tristan-gaeta/cs361-final-project/issues"
+  },
+  "homepage": "https://github.com/tristan-gaeta/cs361-final-project#readme",
+  "dependencies": {
+    "matter-js": "^0.17.1"
+  }
+}
