@@ -35,7 +35,8 @@ class Game {
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
         Matter.Events.on(this.engine, 'beforeUpdate', (event) => {
-            for (let body of event.source.world.bodies) {
+            let bodies = Matter.Composite.allBodies(event.source.world)
+            for (let body of bodies) {
                 if (body.label == "Projectile" && body.isSleeping) {
                     Matter.Composite.remove(this.engine.world, body, true)
                 } else {
@@ -67,7 +68,7 @@ class Game {
     }
 
     /**
-     * @deprecated this method creates a renderer object and maximizes the canvas
+     * @description this method creates a renderer object and maximizes the canvas
      * size.
      * 
      * @returns a matter.js render object
