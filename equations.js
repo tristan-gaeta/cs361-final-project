@@ -216,7 +216,7 @@ class Equations {
                 break;
             case ("√"):
                 if (!Number.isInteger(Math.sqrt(leftVal))) {
-                    let factors = Equations.factor(leftVal);
+                    let factors = Equations.#factor(leftVal);
                     let multipliers = []
 
                     for (let p of factors) {
@@ -289,26 +289,28 @@ class Equations {
 
         //Create the string representation of the expression
         if (root.operation == "√") {
-            root.string = ("√").concat(left);
+            root.string = "√" + left;
         }
-        else if (typeof root.right == "number") {
-            right = root.right;
-        } else {
-            right = root.right.string;
-            switch (root.operation) {
-                case "+":
-                    if (root.right.operation == "+" || root.right.operation == "-") {
-                        right = right.substring(1, right.length - 1)
-                    }
-                    break;
-                case "*":
-                    if (root.right.operation == "*") {
-                        right = right.substring(1, right.length - 1)
-                    }
-                    break;
+        else {
+            if (typeof root.right == "number") {
+                right = root.right;
+            } else {
+                right = root.right.string;
+                switch (root.operation) {
+                    case "+":
+                        if (root.right.operation == "+" || root.right.operation == "-") {
+                            right = right.substring(1, right.length - 1)
+                        }
+                        break;
+                    case "*":
+                        if (root.right.operation == "*") {
+                            right = right.substring(1, right.length - 1)
+                        }
+                        break;
+                }
             }
+            root.string = `(${left} ${root.operation} ${right})`
         }
-        root.string = `(${left} ${root.operation} ${right})`
 
         return root;
     }

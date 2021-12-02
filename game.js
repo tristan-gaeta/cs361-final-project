@@ -12,11 +12,11 @@ class Game {
 
     static HEIGHT_RATIO = 1; //The unit height of the game-world, render bounds, and display canvas
 
-    static RENDER_SCALE = 2000; //The dimension scale for the render bounds
+    static RENDER_SCALE = 960 * 2; //The dimension scale for the render bounds
 
-    static WORLD_SCALE = 2000; //The dimension scale for the game-world
+    static WORLD_SCALE = 960 * 2; //The dimension scale for the game-world
 
-    static FLOOR_HEIGHT = Game.HEIGHT_RATIO * Game.WORLD_SCALE - 256;
+    static FLOOR_HEIGHT = Game.HEIGHT_RATIO * Game.WORLD_SCALE - 2 * GameObjects.BLOCK_SIZE;
 
     /**
      * @constructor creates new instances of a Game object. The display canvas for
@@ -30,17 +30,28 @@ class Game {
 
         this.mouseConstraint = GameObjects.mouseConstraint(this);
 
-        this.slingShot = GameObjects.slingShot(this, 400, 800);
+        this.slingShot = GameObjects.slingShot(this, Game.WIDTH_RATIO * Game.WORLD_SCALE / 8, Game.HEIGHT_RATIO * Game.WORLD_SCALE / 3);
 
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
         Matter.Events.on(this.engine, 'beforeUpdate', (event) => {
             let bodies = Matter.Composite.allBodies(event.source.world)
             for (let body of bodies) {
-                if (body.label == "Projectile" && body.isSleeping) {
-                    Matter.Composite.remove(this.engine.world, body, true)
-                } else {
-                    body.velocityPrev = body.velocity;
+                for (let part of body.parts) {
+                    if (part.label == "Projectile" && part.isSleeping) {
+                        Matter.Composite.remove(this.engine.world, part, true)
+                    } else {
+                        part.velocityPrev = part.velocity;
+                    }
+                }
+            }
+        })
+
+        Matter.Events.on(this.engine, "afterUpdate", (event) => {
+            let bodies = Matter.Composite.allBodies(event.source.world)
+            for (let body of bodies) {
+                for (let part of body.parts) {
+                    part.angle = body.angle;
                 }
             }
         })
@@ -60,7 +71,8 @@ class Game {
             }
         })
 
-        let floor = Matter.Bodies.rectangle(Game.WIDTH_RATIO * Game.WORLD_SCALE / 2, Game.FLOOR_HEIGHT + 250, Game.WIDTH_RATIO * Game.WORLD_SCALE, 500, { isStatic: true, label: "Ground" });
+        let floor = Matter.Bodies.rectangle(Game.WIDTH_RATIO * Game.WORLD_SCALE / 2, Game.FLOOR_HEIGHT + 250, Game.WIDTH_RATIO * Game.WORLD_SCALE, 500,
+            { isStatic: true, label: "Ground", friction: 1, render: { opacity: 0.5 } });
 
         Matter.Composite.add(this.engine.world, [floor, this.slingShot, this.slingShot.bodyB, this.mouseConstraint])
         Matter.Render.run(this.renderer);
@@ -88,7 +100,9 @@ class Game {
             bounds: Matter.Bounds.create([{ x: 0, y: 0 }, { x: Game.WIDTH_RATIO * Game.RENDER_SCALE, y: 0 }, { x: Game.WIDTH_RATIO * Game.RENDER_SCALE, y: Game.HEIGHT_RATIO * Game.RENDER_SCALE }, { x: 0, y: Game.HEIGHT_RATIO * Game.RENDER_SCALE }]),
             hasBounds: true,
             options: {
+                background: "images/background.png",
                 showDebug: true,
+                showSleeping: false,
                 width: pageWidth,
                 height: pageHeight,
                 wireframes: false,
