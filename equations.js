@@ -85,7 +85,21 @@ class Equations {
                             this.left.scale(scalar ** 2);
                         }
                 }
+                //Update string and value
                 this.value *= scalar;
+                let left, right;
+                if (typeof this.left == "number") {
+                    left = this.left;
+                } else {
+                    left = this.left.string;
+                } 
+                if (typeof this.right == "number") {
+                    right = this.right;
+                } else {
+                    right = this.right.string;
+                }
+                this.string = `(${left} ${this.operation} ${right})`
+
                 return this;
             },
         }
@@ -267,6 +281,8 @@ class Equations {
                 root.value = Math.sqrt(leftVal);
                 break;
         }
+
+        //Create the string representation of the expression
         let left, right;
         if (typeof root.left == "number") {
             left = root.left;
@@ -287,7 +303,6 @@ class Equations {
             }
         }
 
-        //Create the string representation of the expression
         if (root.operation == "√") {
             root.string = "√" + left;
         }

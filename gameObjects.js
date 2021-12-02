@@ -15,12 +15,13 @@ class GameObjects {
     static SLING_SHOT_LENGTH = 2.5 * GameObjects.BLOCK_SIZE;
 
     static arch(x = 0, y = 0) {
+        let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
         let comp = Matter.Composite.create();
         let stack = Matter.Composites.stack(0, GameObjects.BLOCK_SIZE, 2, 2, 3 * GameObjects.BLOCK_SIZE, 0, (x, y) => {
-            return GameObjects.rect(x, y, 1, 2, "images/Material Texture/Metal/");
+            return GameObjects.rect(x, y, 1, 2, `images/Material Texture/${texture}`);
         })
         Matter.Composite.move(stack, Matter.Composite.allBodies(stack), comp);
-        Matter.Composite.add(comp, GameObjects.rect(5 * GameObjects.BLOCK_SIZE / 2, GameObjects.BLOCK_SIZE / 2, 5, 1, "images/Material Texture/Metal/"))
+        Matter.Composite.add(comp, GameObjects.rect(5 * GameObjects.BLOCK_SIZE / 2, GameObjects.BLOCK_SIZE / 2, 5, 1, `images/Material Texture/${texture}`))
         Matter.Composite.translate(comp, { x: x, y: y })
         return comp
     }
@@ -49,7 +50,7 @@ class GameObjects {
             }
             return Matter.Bodies.rectangle(x, y, GameObjects.BLOCK_SIZE, GameObjects.BLOCK_SIZE, { render: render });
         })
-        let body = Matter.Body.create({ parts: comp.bodies, isSleeping: true})
+        let body = Matter.Body.create({ parts: comp.bodies, isSleeping: true })
         Matter.Body.setPosition(body, { x: x, y: y })
         return body;
     }
