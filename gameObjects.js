@@ -14,18 +14,21 @@ class GameObjects {
 
     static SLING_SHOT_LENGTH = 2.5 * GameObjects.BLOCK_SIZE;
 
-    static arch(x = 0, y = 0) {
-        let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
-        let comp = Matter.Composite.create();
-        let stack = Matter.Composites.stack(0, GameObjects.BLOCK_SIZE, 2, 2, 3 * GameObjects.BLOCK_SIZE, 0, (x, y) => {
-            return GameObjects.rect(x, y, 1, 2, `images/Material Texture/${texture}`);
-        })
-        Matter.Composite.move(stack, Matter.Composite.allBodies(stack), comp);
-        Matter.Composite.add(comp, GameObjects.rect(5 * GameObjects.BLOCK_SIZE / 2, GameObjects.BLOCK_SIZE / 2, 5, 1, `images/Material Texture/${texture}`))
-        Matter.Composite.translate(comp, { x: x, y: y })
-        return comp
-    }
+    static projectile(x, y) {
+        let txt = Matter.Common.choose(["images/disguised-face_1f978.png", "images/face-with-head-bandage_1f915.png", "images/face-with-medical-mask_1f637.png", "images/face-with-raised-eyebrow_1f928.png"])
+        let body = Matter.Bodies.circle(x, y, GameObjects.BLOCK_SIZE / 2, {
+            render: { sprite: { texture: txt, xScale: GameObjects.BLOCK_SIZE / 130, yScale: GameObjects.BLOCK_SIZE / 130 } },
+            restitution: 0.8,
+            collisionFilter: GameObjects._PRE_SHOT_COLLISION_FILTER,
+            label: "Projectile",
+            powerActivated: false,
+            launched: false,
+            activatePower: undefined,
+            sleepThreshold: 3000 / 16.666
+        });
 
+        return body
+    }
 
     static rect(x, y, width, height, material) {
         let comp = Matter.Composites.stack(0, 0, width, height, 0, 0, (x, y, cols, rows) => {
@@ -55,24 +58,8 @@ class GameObjects {
         return body;
     }
 
-    static projectile(x, y) {
-        let txt = Matter.Common.choose(["images/disguised-face_1f978.png", "images/face-with-head-bandage_1f915.png", "images/face-with-medical-mask_1f637.png", "images/face-with-raised-eyebrow_1f928.png"])
-        let body = Matter.Bodies.circle(x, y, GameObjects.BLOCK_SIZE / 2, {
-            render: { sprite: { texture: txt, xScale: GameObjects.BLOCK_SIZE / 130, yScale: GameObjects.BLOCK_SIZE / 130 } },
-            restitution: 0.8,
-            collisionFilter: GameObjects._PRE_SHOT_COLLISION_FILTER,
-            label: "Projectile",
-            powerActivated: false,
-            launched: false,
-            activatePower: undefined,
-            sleepThreshold: 3000 / 16.666
-        });
-
-        return body
-    }
-
     static mouseConstraint(game) {
-        let gameMouse = Matter.Mouse.create(game.renderer.canvas,);
+        let gameMouse = Matter.Mouse.create(game.renderer.canvas, );
         let mouseConstraint = Matter.MouseConstraint.create(game.engine, {
             mouse: gameMouse,
             collisionFilter: GameObjects._PRE_SHOT_COLLISION_FILTER,
@@ -83,7 +70,7 @@ class GameObjects {
                 }
             }
         });
-        let scale = { x: Game.WIDTH_RATIO * Game.RENDER_SCALE / game.renderer.canvas.width, y: Game.HEIGHT_RATIO * Game.RENDER_SCALE / game.renderer.canvas.height }
+        let scale = { x: Generator.WIDTH_RATIO * Generator.RENDER_SCALE / game.renderer.canvas.width, y: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE / game.renderer.canvas.height }
         Matter.Mouse.setScale(mouseConstraint.mouse, scale)
         return mouseConstraint;
     }

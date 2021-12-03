@@ -8,16 +8,6 @@
  */
 class Game {
 
-    static WIDTH_RATIO = 2; //The unit width of the game-world, render bounds, and display canvas
-
-    static HEIGHT_RATIO = 1; //The unit height of the game-world, render bounds, and display canvas
-
-    static RENDER_SCALE = 960 * 2; //The dimension scale for the render bounds
-
-    static WORLD_SCALE = 960 * 2; //The dimension scale for the game-world
-
-    static FLOOR_HEIGHT = Game.HEIGHT_RATIO * Game.WORLD_SCALE - 2 * GameObjects.BLOCK_SIZE;
-
     /**
      * @constructor creates new instances of a Game object. The display canvas for
      * this game object is appended to the current document-body and both the engine 
@@ -26,11 +16,13 @@ class Game {
     constructor() {
         this.engine = Matter.Engine.create({ enableSleeping: true });
 
-        this.renderer = this.#createRenderer();
+        this.renderer = this.createRenderer();
+
+        this.generator = new Generator();
 
         this.mouseConstraint = GameObjects.mouseConstraint(this);
 
-        this.slingShot = GameObjects.slingShot(this, Game.WIDTH_RATIO * Game.WORLD_SCALE / 8, Game.HEIGHT_RATIO * Game.WORLD_SCALE / 3);
+        this.slingShot = GameObjects.slingShot(this, Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 8, Generator.HEIGHT_RATIO * Generator.WORLD_SCALE / 3);
 
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
@@ -71,10 +63,8 @@ class Game {
             }
         })
 
-        let floor = Matter.Bodies.rectangle(Game.WIDTH_RATIO * Game.WORLD_SCALE / 2, Game.FLOOR_HEIGHT + 250, Game.WIDTH_RATIO * Game.WORLD_SCALE, 500,
-            { isStatic: true, label: "Ground", friction: 1, render: { opacity: 0.5 } });
 
-        Matter.Composite.add(this.engine.world, [floor, this.slingShot, this.slingShot.bodyB, this.mouseConstraint])
+        Matter.Composite.add(this.engine.world, [this.generator.getSkeleton(), this.mouseConstraint, this.slingShot, this.slingShot.bodyB])
         Matter.Render.run(this.renderer);
         Matter.Runner.run(this.engine);
     }
@@ -85,19 +75,19 @@ class Game {
      * 
      * @returns a matter.js render object
      */
-    #createRenderer() {
+    createRenderer() {
         let pageWidth = document.body.clientWidth;
         let pageHeight = window.innerHeight - 16;
-        if (pageWidth / pageHeight > Game.WIDTH_RATIO / Game.HEIGHT_RATIO) {
-            pageWidth = Game.WIDTH_RATIO * pageHeight / Game.HEIGHT_RATIO
+        if (pageWidth / pageHeight > Generator.WIDTH_RATIO / Generator.HEIGHT_RATIO) {
+            pageWidth = Generator.WIDTH_RATIO * pageHeight / Generator.HEIGHT_RATIO
         } else {
-            pageHeight = Game.HEIGHT_RATIO * pageWidth / Game.WIDTH_RATIO
+            pageHeight = Generator.HEIGHT_RATIO * pageWidth / Generator.WIDTH_RATIO
         }
 
         let render = Matter.Render.create({
             element: document.body,
             engine: this.engine,
-            bounds: Matter.Bounds.create([{ x: 0, y: 0 }, { x: Game.WIDTH_RATIO * Game.RENDER_SCALE, y: 0 }, { x: Game.WIDTH_RATIO * Game.RENDER_SCALE, y: Game.HEIGHT_RATIO * Game.RENDER_SCALE }, { x: 0, y: Game.HEIGHT_RATIO * Game.RENDER_SCALE }]),
+            bounds: Matter.Bounds.create([{ x: 0, y: 0 }, { x: Generator.WIDTH_RATIO * Generator.RENDER_SCALE, y: 0 }, { x: Generator.WIDTH_RATIO * Generator.RENDER_SCALE, y: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE }, { x: 0, y: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE }]),
             hasBounds: true,
             options: {
                 background: "images/background.png",
