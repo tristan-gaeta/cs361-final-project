@@ -47,8 +47,8 @@ class Game {
                         part.angle = body.angle;
                     }
                 }
-                if(body.label == "Block"){
-                    if (body.shockAbsorbed > 500){
+                if (body.label == "Block") {
+                    if (body.shockAbsorbed > 500) {
                         Matter.Composite.remove(event.source.world, body, true)
                     }
                 }
@@ -75,7 +75,7 @@ class Game {
         })
 
 
-        Matter.Composite.add(this.engine.world, [this.generator.getSkeleton(), this.mouseConstraint, this.slingShot, this.slingShot.bodyB])
+        Matter.Composite.add(this.engine.world, [this.generator.getSkeleton(), this.generator.getWorld(), this.mouseConstraint, this.slingShot, this.slingShot.bodyB])
         Matter.Render.run(this.renderer);
         Matter.Runner.run(this.engine);
     }
