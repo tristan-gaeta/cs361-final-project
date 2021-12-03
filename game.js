@@ -30,7 +30,7 @@ class Game {
 
         this.mouseConstraint = GameObjects.mouseConstraint(this);
 
-        this.slingShot = GameObjects.slingShot(this, Game.WIDTH_RATIO * Game.WORLD_SCALE / 8, Game.HEIGHT_RATIO * Game.WORLD_SCALE / 3);
+        this.slingShot = GameObjects.slingShot(this, Game.WIDTH_RATIO * Game.WORLD_SCALE / 8, Game.HEIGHT_RATIO *2* Game.WORLD_SCALE / 3);
 
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
@@ -50,8 +50,15 @@ class Game {
         Matter.Events.on(this.engine, "afterUpdate", (event) => {
             let bodies = Matter.Composite.allBodies(event.source.world)
             for (let body of bodies) {
-                for (let part of body.parts) {
-                    part.angle = body.angle;
+                if (body.parts.length > 1) {
+                    for (let part of body.parts) {
+                        part.angle = body.angle;
+                    }
+                }
+                if(body.label == "Block"){
+                    if (body.shockAbsorbed > 500){
+                        Matter.Composite.remove(event.source.world, body, true)
+                    }
                 }
             }
         })
@@ -65,16 +72,21 @@ class Game {
                 let mag = Matter.Vector.magnitude(Matter.Vector.sub(momentumA, momentumB));
                 pair.bodyA.shockAbsorbed = pair.bodyA.shockAbsorbed || 0;
                 pair.bodyA.shockAbsorbed += Math.floor(mag);
+                pair.bodyA.parent.shockAbsorbed = pair.bodyA.parent.shockAbsorbed || 0;
+                pair.bodyA.parent.shockAbsorbed += pair.bodyA.shockAbsorbed;
 
                 pair.bodyB.shockAbsorbed = pair.bodyB.shockAbsorbed || 0;
                 pair.bodyB.shockAbsorbed += Math.floor(mag);
+                pair.bodyB.parent.shockAbsorbed = pair.bodyB.parent.shockAbsorbed || 0;
+                pair.bodyB.parent.shockAbsorbed += pair.bodyB.shockAbsorbed;
             }
         })
 
         let floor = Matter.Bodies.rectangle(Game.WIDTH_RATIO * Game.WORLD_SCALE / 2, Game.FLOOR_HEIGHT + 250, Game.WIDTH_RATIO * Game.WORLD_SCALE, 500,
             { isStatic: true, label: "Ground", friction: 1, render: { opacity: 0.5 } });
 
-        Matter.Composite.add(this.engine.world, [floor, this.slingShot, this.slingShot.bodyB, this.mouseConstraint])
+        Matter.Composite.add(this.engine.world, [floor, this.slingShot, this.slingShot.bodyB, this.mouseConstraint,
+            GameObjects.arch(3000, Game.FLOOR_HEIGHT - 5 * GameObjects.BLOCK_SIZE), GameObjects.arch(3000, Game.FLOOR_HEIGHT - 10 * GameObjects.BLOCK_SIZE), GameObjects.arch(3000 - 5 * GameObjects.BLOCK_SIZE, Game.FLOOR_HEIGHT - 5 * GameObjects.BLOCK_SIZE)])
         Matter.Render.run(this.renderer);
         Matter.Runner.run(this.engine);
     }

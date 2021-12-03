@@ -12,14 +12,15 @@ class GameObjects {
 
     static BLOCK_SIZE = 64;
 
-    static SLING_SHOT_LENGTH = 2.5 * GameObjects.BLOCK_SIZE;
+    static SLING_SHOT_LENGTH = 4 * GameObjects.BLOCK_SIZE;
 
     static arch(x = 0, y = 0) {
-        let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
         let comp = Matter.Composite.create();
         let stack = Matter.Composites.stack(0, GameObjects.BLOCK_SIZE, 2, 2, 3 * GameObjects.BLOCK_SIZE, 0, (x, y) => {
+            let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
             return GameObjects.rect(x, y, 1, 2, `images/Material Texture/${texture}`);
         })
+        let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
         Matter.Composite.move(stack, Matter.Composite.allBodies(stack), comp);
         Matter.Composite.add(comp, GameObjects.rect(5 * GameObjects.BLOCK_SIZE / 2, GameObjects.BLOCK_SIZE / 2, 5, 1, `images/Material Texture/${texture}`))
         Matter.Composite.translate(comp, { x: x, y: y })
@@ -48,9 +49,9 @@ class GameObjects {
             } else {
                 render = { sprite: { texture: material + texture + ".png", xScale: GameObjects.BLOCK_SIZE / 64, yScale: GameObjects.BLOCK_SIZE / 64 } }
             }
-            return Matter.Bodies.rectangle(x, y, GameObjects.BLOCK_SIZE, GameObjects.BLOCK_SIZE, { render: render });
+            return Matter.Bodies.rectangle(x, y, GameObjects.BLOCK_SIZE, GameObjects.BLOCK_SIZE, { render: render});
         })
-        let body = Matter.Body.create({ parts: comp.bodies, isSleeping: true })
+        let body = Matter.Body.create({ label: "Block", parts: comp.bodies, isSleeping: true, shockAbsorbed: 0,})
         Matter.Body.setPosition(body, { x: x, y: y })
         return body;
     }
@@ -65,7 +66,8 @@ class GameObjects {
             powerActivated: false,
             launched: false,
             activatePower: undefined,
-            sleepThreshold: 3000 / 16.666
+            sleepThreshold: 3000 / 16.666,
+            frictionAir: 0.005
         });
 
         return body
@@ -94,7 +96,7 @@ class GameObjects {
             pointA: { x: x, y: y },
             bodyB: GameObjects.projectile(x, y),
             length: 0,
-            stiffness: 0.02,
+            stiffness: 0.007,
             render: {
                 type: "line",
                 anchors: false,
