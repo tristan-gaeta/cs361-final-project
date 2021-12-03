@@ -12,9 +12,9 @@ class Game {
 
     static HEIGHT_RATIO = 1; //The unit height of the game-world, render bounds, and display canvas
 
-    static RENDER_SCALE = 960 * 2; //The dimension scale for the render bounds
+    static RENDER_SCALE = 30 * GameObjects.BLOCK_SIZE; //The dimension scale for the render bounds
 
-    static WORLD_SCALE = 960 * 2; //The dimension scale for the game-world
+    static WORLD_SCALE = 30 * GameObjects.BLOCK_SIZE; //The dimension scale for the game-world
 
     static FLOOR_HEIGHT = Game.HEIGHT_RATIO * Game.WORLD_SCALE - 2 * GameObjects.BLOCK_SIZE;
 
@@ -30,7 +30,7 @@ class Game {
 
         this.mouseConstraint = GameObjects.mouseConstraint(this);
 
-        this.slingShot = GameObjects.slingShot(this, Game.WIDTH_RATIO * Game.WORLD_SCALE / 8, Game.HEIGHT_RATIO *2* Game.WORLD_SCALE / 3);
+        this.slingShot = GameObjects.slingShot(this, Game.WIDTH_RATIO * Game.WORLD_SCALE / 8, Game.HEIGHT_RATIO * 2 * Game.WORLD_SCALE / 3);
 
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
@@ -55,8 +55,8 @@ class Game {
                         part.angle = body.angle;
                     }
                 }
-                if(body.label == "Block"){
-                    if (body.shockAbsorbed > 500){
+                if (body.label == "Block") {
+                    if (body.shockAbsorbed > 500) {
                         Matter.Composite.remove(event.source.world, body, true)
                     }
                 }
@@ -82,8 +82,8 @@ class Game {
             }
         })
 
-        let floor = Matter.Bodies.rectangle(Game.WIDTH_RATIO * Game.WORLD_SCALE / 2, Game.FLOOR_HEIGHT + 250, Game.WIDTH_RATIO * Game.WORLD_SCALE, 500,
-            { isStatic: true, label: "Ground", friction: 1, render: { opacity: 0.5 } });
+        let floor = Matter.Bodies.rectangle(Game.WIDTH_RATIO * Game.WORLD_SCALE / 2, Game.FLOOR_HEIGHT + 2 * GameObjects.BLOCK_SIZE, Game.WIDTH_RATIO * Game.WORLD_SCALE, 4 * GameObjects.BLOCK_SIZE,
+            { isStatic: true, label: "Ground", friction: 1, render: { sprite: { texture: "images/Grass_Long.png", xScale: 2, yScale: 2 } } });
 
         Matter.Composite.add(this.engine.world, [floor, this.slingShot, this.slingShot.bodyB, this.mouseConstraint,
             GameObjects.arch(3000, Game.FLOOR_HEIGHT - 5 * GameObjects.BLOCK_SIZE), GameObjects.arch(3000, Game.FLOOR_HEIGHT - 10 * GameObjects.BLOCK_SIZE), GameObjects.arch(3000 - 5 * GameObjects.BLOCK_SIZE, Game.FLOOR_HEIGHT - 5 * GameObjects.BLOCK_SIZE)])

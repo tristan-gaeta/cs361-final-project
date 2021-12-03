@@ -12,7 +12,7 @@ class GameObjects {
 
     static BLOCK_SIZE = 64;
 
-    static SLING_SHOT_LENGTH = 4 * GameObjects.BLOCK_SIZE;
+    static SLING_SHOT_LENGTH = 3 * GameObjects.BLOCK_SIZE;
 
     static arch(x = 0, y = 0) {
         let comp = Matter.Composite.create();
@@ -96,7 +96,7 @@ class GameObjects {
             pointA: { x: x, y: y },
             bodyB: GameObjects.projectile(x, y),
             length: 0,
-            stiffness: 0.007,
+            stiffness: 0.01,
             render: {
                 type: "line",
                 anchors: false,
