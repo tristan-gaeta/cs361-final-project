@@ -12,7 +12,7 @@ class GameObjects {
 
     static BLOCK_SIZE = 64;
 
-    static SLING_SHOT_LENGTH = 2.5 * GameObjects.BLOCK_SIZE;
+    static SLING_SHOT_LENGTH = 4 * GameObjects.BLOCK_SIZE;
 
     static projectile(x, y) {
         let txt = Matter.Common.choose(["images/disguised-face_1f978.png", "images/face-with-head-bandage_1f915.png", "images/face-with-medical-mask_1f637.png", "images/face-with-raised-eyebrow_1f928.png"])
@@ -51,9 +51,9 @@ class GameObjects {
             } else {
                 render = { sprite: { texture: material + texture + ".png", xScale: GameObjects.BLOCK_SIZE / 64, yScale: GameObjects.BLOCK_SIZE / 64 } }
             }
-            return Matter.Bodies.rectangle(x, y, GameObjects.BLOCK_SIZE, GameObjects.BLOCK_SIZE, { render: render });
+            return Matter.Bodies.rectangle(x, y, GameObjects.BLOCK_SIZE, GameObjects.BLOCK_SIZE, { render: render});
         })
-        let body = Matter.Body.create({ parts: comp.bodies, isSleeping: true })
+        let body = Matter.Body.create({ label: "Block", parts: comp.bodies, isSleeping: true, shockAbsorbed: 0,})
         Matter.Body.setPosition(body, { x: x, y: y })
         return body;
     }
@@ -81,7 +81,7 @@ class GameObjects {
             pointA: { x: x, y: y },
             bodyB: GameObjects.projectile(x, y),
             length: 0,
-            stiffness: 0.02,
+            stiffness: 0.007,
             render: {
                 type: "line",
                 anchors: false,
