@@ -3,7 +3,7 @@
 
 class Generator {
 
-    static SEED = 1;
+    SEED;
 
     static WIDTH_RATIO = 2; //The unit width of the game-world, render bounds, and display canvas
 
@@ -19,7 +19,7 @@ class Generator {
 
     static arch(x = 0, y = 0) {
         let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
-        let comp = Matter.Composite.create();
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure" , width: 1, height: 1 });
         let stack = Matter.Composites.stack(0, GameObjects.BLOCK_SIZE, 2, 2, 3 * GameObjects.BLOCK_SIZE, 0, (x, y) => {
             return GameObjects.rect(x, y, 1, 2, `images/Material Texture/${texture}`);
         });
@@ -29,9 +29,25 @@ class Generator {
         return comp
     }
 
+    static doubleArch(x = 0, y = 0) {
+        let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure" , width: 1, height: 1 });
+        
+        let top = Matter.Composites.stack(0, 0, 1, 1, GameObjects.BLOCK_SIZE, 0, (x, y) => {
+            return GameObjects.rect(x, y, 5, 2, `images/Material Texture/${texture}`);
+        });
+        let pillars = Matter.Composites.stack(0, 2 * GameObjects.BLOCK_SIZE, 3, 1, GameObjects.BLOCK_SIZE, 0, (x, y) => {
+            return GameObjects.rect(x, y, 1, 3, `images/Material Texture/${texture}`);
+        });
+        Matter.Composite.move(top, Matter.Composite.allBodies(top), comp);
+        Matter.Composite.move(pillars, Matter.Composite.allBodies(pillars), comp);
+        Matter.Composite.translate(comp, { x: x, y: y })
+        return comp
+    }
+
     static box(x = 0, y = 0) {
         let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
-        let comp = Matter.Composite.create();
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure" , width: 1, height: 1 });
         let vertical = Matter.Composites.stack(0, GameObjects.BLOCK_SIZE, 2, 1, 3 * GameObjects.BLOCK_SIZE, 0, (x, y) => {
             return GameObjects.rect(x, y, 1, 3, `images/Material Texture/${texture}`);
         });
@@ -44,44 +60,63 @@ class Generator {
         return comp
     }
 
-    constructor() {
-            this.skeleton = Matter.Composite.create();
-            this.world = Matter.Composite.create();
-            this.ground = Matter.Bodies.rectangle(Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 2, Generator.FLOOR_HEIGHT + 250, Generator.WIDTH_RATIO * Generator.WORLD_SCALE, 500, { isStatic: true, label: "Ground", friction: 1, render: { opacity: 0.5 } });
-            this.origin = { "x": 0, "y": 0 };
-            this.ref = { "x": Generator.WIDTH_RATIO * Generator.WORLD_SCALE * 0.5, "y": Generator.FLOOR_HEIGHT };
-        } // 
-
-
-    getSkeleton() {
-        Matter.Composite.add(this.skeleton, [this.ground]);
-        return this.skeleton;
+    static dualpillars(x = 0, y = 0) {
+        let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure" , width: 1, height: 1 });
+        let vertical = Matter.Composites.stack(GameObjects.BLOCK_SIZE, 0, 2, 1, GameObjects.BLOCK_SIZE, 0, (x, y) => {
+            return GameObjects.rect(x, y, 1, 5, `images/Material Texture/${texture}`);
+        });
+        Matter.Composite.move(vertical, Matter.Composite.allBodies(vertical), comp);
+        Matter.Composite.translate(comp, { x: x, y: y })
+        return comp
     }
+
+    static tripillars(x = 0, y = 0) { 
+        let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure" , width: 1, height: 1 });
+        let vertical = Matter.Composites.stack(0, 0, 3, 1, GameObjects.BLOCK_SIZE, 0, (x, y) => {
+            return GameObjects.rect(x, y, 1, 5, `images/Material Texture/${texture}`);
+        });
+        Matter.Composite.move(vertical, Matter.Composite.allBodies(vertical), comp);
+        Matter.Composite.translate(comp, { x: x, y: y })
+        return comp
+    }
+
+    constructor() {
+            this.seed = 1;
+        } 
+
 
     //creates world - test dummy at the moment
     getWorld() {
-
-        var arch = Generator.arch();
-        var box = Generator.box(Generator.STRUCT_SIZE);
+        var world = Matter.Composite.create();
 
 
-        Matter.Composite.add(this.world, [arch, box]);
+        var dpillars = Generator.dualpillars();
+        var arch = Generator.arch(0, -Generator.STRUCT_SIZE);
+        var tpillars = Generator.tripillars(Generator.STRUCT_SIZE);
+        var box = Generator.box(Generator.STRUCT_SIZE, -Generator.STRUCT_SIZE);
+        var darch = Generator.doubleArch(Generator.STRUCT_SIZE, -2 * Generator.STRUCT_SIZE);
 
-        this.translateGround(this.world);
+
+        Matter.Composite.add(world, [arch, dpillars, tpillars, box, darch]);
+
+        this.translateGround(world);
 
 
-        console.dir(this.world);
+        console.dir(world);
 
-        return this.world;
+        return world;
     }
 
     //translate an input composite to the ground reference
     translateGround(composite) {
+        let ref = { "x": Generator.WIDTH_RATIO * Generator.WORLD_SCALE * 0.5, "y": Generator.FLOOR_HEIGHT };
 
         let bound = Matter.Composite.bounds(composite).max;
         bound.x = 0;
 
-        let spawn = Matter.Vector.sub(this.ref, bound);
+        let spawn = Matter.Vector.sub(ref, bound);
 
         Matter.Composite.translate(composite, spawn, true);
 
