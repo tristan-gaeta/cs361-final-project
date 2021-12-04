@@ -130,7 +130,8 @@ class Generator {
             [1, 1, 1]
         ], Generator.arch);
 
-        Matter.Composite.add(world, [arch, dpillars, tpillars, box, darch]);
+        Matter.Composite.add(world, stack);
+        // Matter.Composite.add(world, [arch, dpillars, tpillars, box, darch]);
 
         this.translateGround(world);
 
