@@ -196,7 +196,7 @@ class Equations {
         let scalar = 1;
         switch (root.operation) {
             case ("-"):
-                if (leftVal == 0) throw "Scale zero error."
+                if (leftVal <= 0) throw "Scale zero error."
                 while (leftVal * scalar <= rightVal) {
                     scalar++;
                 }

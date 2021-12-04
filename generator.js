@@ -9,9 +9,9 @@ class Generator {
 
     static HEIGHT_RATIO = 1; //The unit height of the game-world, render bounds, and display canvas
 
-    static RENDER_SCALE = 960 * 2; //The dimension scale for the render bounds
+    static RENDER_SCALE = 30 * GameObjects.BLOCK_SIZE; //The dimension scale for the render bounds
 
-    static WORLD_SCALE = 960 * 2; //The dimension scale for the game-world
+    static WORLD_SCALE = 30 * GameObjects.BLOCK_SIZE; //The dimension scale for the game-world
 
     static FLOOR_HEIGHT = Generator.HEIGHT_RATIO * Generator.WORLD_SCALE - 2 * GameObjects.BLOCK_SIZE;
 
@@ -19,20 +19,20 @@ class Generator {
 
     static arch(x = 0, y = 0) {
         let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
-        let comp = Matter.Composite.create({ level: "bottom", label: "Structure" , width: 1, height: 1 });
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure", width: 1, height: 1 });
         let stack = Matter.Composites.stack(0, GameObjects.BLOCK_SIZE, 2, 2, 3 * GameObjects.BLOCK_SIZE, 0, (x, y) => {
-            return GameObjects.rect(x, y, 1, 2, `images/Material Texture/${texture}`);
+            return GameObjects.rect(x, y, 1, 2, texture);
         });
         Matter.Composite.move(stack, Matter.Composite.allBodies(stack), comp);
-        Matter.Composite.add(comp, GameObjects.rect(5 * GameObjects.BLOCK_SIZE / 2, GameObjects.BLOCK_SIZE / 2, 5, 1, `images/Material Texture/${texture}`))
+        Matter.Composite.add(comp, GameObjects.rect(5 * GameObjects.BLOCK_SIZE / 2, GameObjects.BLOCK_SIZE / 2, 5, 1, texture))
         Matter.Composite.translate(comp, { x: x, y: y })
         return comp
     }
 
     static doubleArch(x = 0, y = 0) {
         let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
-        let comp = Matter.Composite.create({ level: "bottom", label: "Structure" , width: 1, height: 1 });
-        
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure", width: 1, height: 1 });
+
         let top = Matter.Composites.stack(0, 0, 1, 1, GameObjects.BLOCK_SIZE, 0, (x, y) => {
             return GameObjects.rect(x, y, 5, 2, `images/Material Texture/${texture}`);
         });
@@ -47,12 +47,12 @@ class Generator {
 
     static box(x = 0, y = 0) {
         let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
-        let comp = Matter.Composite.create({ level: "bottom", label: "Structure" , width: 1, height: 1 });
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure", width: 1, height: 1 });
         let vertical = Matter.Composites.stack(0, GameObjects.BLOCK_SIZE, 2, 1, 3 * GameObjects.BLOCK_SIZE, 0, (x, y) => {
-            return GameObjects.rect(x, y, 1, 3, `images/Material Texture/${texture}`);
+            return GameObjects.rect(x, y, 1, 3, texture);
         });
         let horizontal = Matter.Composites.stack(0, 0, 1, 2, 0, 3 * GameObjects.BLOCK_SIZE, (x, y) => {
-            return GameObjects.rect(x, y, 5, 1, `images/Material Texture/${texture}`);
+            return GameObjects.rect(x, y, 5, 1, texture);
         }); //5 * GameObjects.BLOCK_SIZE / 2
         Matter.Composite.move(vertical, Matter.Composite.allBodies(vertical), comp);
         Matter.Composite.move(horizontal, Matter.Composite.allBodies(horizontal), comp);
@@ -62,7 +62,7 @@ class Generator {
 
     static dualpillars(x = 0, y = 0) {
         let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
-        let comp = Matter.Composite.create({ level: "bottom", label: "Structure" , width: 1, height: 1 });
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure", width: 1, height: 1 });
         let vertical = Matter.Composites.stack(GameObjects.BLOCK_SIZE, 0, 2, 1, GameObjects.BLOCK_SIZE, 0, (x, y) => {
             return GameObjects.rect(x, y, 1, 5, `images/Material Texture/${texture}`);
         });
@@ -71,9 +71,9 @@ class Generator {
         return comp
     }
 
-    static tripillars(x = 0, y = 0) { 
+    static tripillars(x = 0, y = 0) {
         let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
-        let comp = Matter.Composite.create({ level: "bottom", label: "Structure" , width: 1, height: 1 });
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure", width: 1, height: 1 });
         let vertical = Matter.Composites.stack(0, 0, 3, 1, GameObjects.BLOCK_SIZE, 0, (x, y) => {
             return GameObjects.rect(x, y, 1, 5, `images/Material Texture/${texture}`);
         });
@@ -82,9 +82,33 @@ class Generator {
         return comp
     }
 
+    static stackStructures(xx, yy, layout, callback) {
+        let stack = Matter.Composite.create(),
+            x = xx,
+            y = yy
+
+        for (let row = 0; row < layout.length; row++) {
+            for (let column = 0; column < layout[row].length; column++) {
+                if (layout[row][column]) {
+                    let comp = callback(x, y);
+
+                    if (comp) {
+                        Matter.Composite.translate(comp, { x: Generator.STRUCT_SIZE * 0.5, y: Generator.STRUCT_SIZE * 0.5 });
+                        Matter.Composite.add(stack, comp);
+                    }
+                }
+                x += Generator.STRUCT_SIZE //+ 2 * GameObjects.BLOCK_SIZE;
+            }
+
+            y += Generator.STRUCT_SIZE;
+            x = xx;
+        }
+        return stack;
+    }
+
     constructor() {
-            this.seed = 1;
-        } 
+        this.seed = 1;
+    }
 
 
     //creates world - test dummy at the moment
@@ -98,6 +122,13 @@ class Generator {
         var box = Generator.box(Generator.STRUCT_SIZE, -Generator.STRUCT_SIZE);
         var darch = Generator.doubleArch(Generator.STRUCT_SIZE, -2 * Generator.STRUCT_SIZE);
 
+        let stack = Generator.stackStructures(0, 0, [
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1]
+        ], Generator.arch);
 
         Matter.Composite.add(world, [arch, dpillars, tpillars, box, darch]);
 
@@ -122,10 +153,5 @@ class Generator {
 
         return composite;
     }
-
-
-
-
-
 
 }

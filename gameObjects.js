@@ -15,22 +15,41 @@ class GameObjects {
     static SLING_SHOT_LENGTH = 4 * GameObjects.BLOCK_SIZE;
 
     static projectile(x, y) {
-        let txt = Matter.Common.choose(["images/disguised-face_1f978.png", "images/face-with-head-bandage_1f915.png", "images/face-with-medical-mask_1f637.png", "images/face-with-raised-eyebrow_1f928.png"])
+        let txt = Matter.Common.choose(["images/balls/Color Ball.png", "images/balls/Gradient-ball.png"])
         let body = Matter.Bodies.circle(x, y, GameObjects.BLOCK_SIZE / 2, {
-            render: { sprite: { texture: txt, xScale: GameObjects.BLOCK_SIZE / 130, yScale: GameObjects.BLOCK_SIZE / 130 } },
+            render: { sprite: { texture: txt, xScale: GameObjects.BLOCK_SIZE / 64, yScale: GameObjects.BLOCK_SIZE / 64 } },
             restitution: 0.8,
             collisionFilter: GameObjects._PRE_SHOT_COLLISION_FILTER,
             label: "Projectile",
             powerActivated: false,
             launched: false,
             activatePower: undefined,
-            sleepThreshold: 3000 / 16.666
+            frictionAir: 0.005,
+            sleepThreshold: 3000 / 16.666,
+            density: 0.005
         });
 
         return body
     }
 
     static rect(x, y, width, height, material) {
+        let hp;
+        switch (material){
+            case ('glass'):
+                hp = 2000;
+                break;
+            case ('wood'):
+                hp = 5000;
+                break;
+            case ('stone'):
+                hp = 7000;
+                break;
+            case ('metal'):
+                hp = 9000;
+                break;
+            default:
+                throw "Invalid block material"
+        }
         let comp = Matter.Composites.stack(0, 0, width, height, 0, 0, (x, y, cols, rows) => {
             let texture = ""
             if (rows == 0) {
@@ -49,17 +68,24 @@ class GameObjects {
             if (texture == "") {
                 render = { visible: false }
             } else {
-                render = { sprite: { texture: material + texture + ".png", xScale: GameObjects.BLOCK_SIZE / 64, yScale: GameObjects.BLOCK_SIZE / 64 } }
+                render = { sprite: { texture: `images/Material Texture/${material}/${texture}.png`, xScale: GameObjects.BLOCK_SIZE / 64, yScale: GameObjects.BLOCK_SIZE / 64 } }
             }
             return Matter.Bodies.rectangle(x, y, GameObjects.BLOCK_SIZE, GameObjects.BLOCK_SIZE, { render: render});
         })
-        let body = Matter.Body.create({ label: "Block", parts: comp.bodies, isSleeping: true, shockAbsorbed: 0,})
+        let body = Matter.Body.create({ label: "Block", hp: hp, parts: comp.bodies, shockAbsorbed: 0, sleepThreshold: 2, frictionAir: 0.9, mass: 1})
         Matter.Body.setPosition(body, { x: x, y: y })
+        Matter.Events.on(body,"sleepStart", (event)=>{
+            Matter.Body.setDensity(event.source,0.001)
+            event.source.frictionAir = 0.01
+        })
+        Matter.Events.on(body, "sleepEnd", (event) => {
+            event.source.sleepThreshold = Infinity
+        })
         return body;
     }
 
     static mouseConstraint(game) {
-        let gameMouse = Matter.Mouse.create(game.renderer.canvas, );
+        let gameMouse = Matter.Mouse.create(game.renderer.canvas,);
         let mouseConstraint = Matter.MouseConstraint.create(game.engine, {
             mouse: gameMouse,
             collisionFilter: GameObjects._PRE_SHOT_COLLISION_FILTER,
@@ -81,7 +107,7 @@ class GameObjects {
             pointA: { x: x, y: y },
             bodyB: GameObjects.projectile(x, y),
             length: 0,
-            stiffness: 0.007,
+            stiffness: 0.009,
             render: {
                 type: "line",
                 anchors: false,
