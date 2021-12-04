@@ -8,29 +8,21 @@
  */
 class Game {
 
-    static WIDTH_RATIO = 2; //The unit width of the game-world, render bounds, and display canvas
-
-    static HEIGHT_RATIO = 1; //The unit height of the game-world, render bounds, and display canvas
-
-    static RENDER_SCALE = 30 * GameObjects.BLOCK_SIZE; //The dimension scale for the render bounds
-
-    static WORLD_SCALE = 30 * GameObjects.BLOCK_SIZE; //The dimension scale for the game-world
-
-    static FLOOR_HEIGHT = Game.HEIGHT_RATIO * Game.WORLD_SCALE - 2 * GameObjects.BLOCK_SIZE;
-
     /**
      * @constructor creates new instances of a Game object. The display canvas for
      * this game object is appended to the current document-body and both the engine 
      * and renderer are run on creation.
      */
     constructor() {
-        this.engine = Matter.Engine.create({ enableSleeping: true });
+        this.engine = Matter.Engine.create({ enableSleeping: true, });
 
-        this.renderer = this.#createRenderer();
+        this.renderer = this.createRenderer();
+
+        this.generator = new Generator();
 
         this.mouseConstraint = GameObjects.mouseConstraint(this);
 
-        this.slingShot = GameObjects.slingShot(this, Game.WIDTH_RATIO * Game.WORLD_SCALE / 8, Game.HEIGHT_RATIO * 2 * Game.WORLD_SCALE / 3);
+        this.slingShot = GameObjects.slingShot(this, Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 8, Generator.HEIGHT_RATIO * 2 * Generator.WORLD_SCALE / 3);
 
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
@@ -56,7 +48,8 @@ class Game {
                     }
                 }
                 if (body.label == "Block") {
-                    if (body.shockAbsorbed > 500) {
+                    if (body.shockAbsorbed > body.hp) {
+                        new Audio(`sounds/sfx-pop${Matter.Common.choose(["", 3, 4, 5, 6])}.mp3`).play()
                         Matter.Composite.remove(event.source.world, body, true)
                     }
                 }
@@ -67,9 +60,17 @@ class Game {
         //pair-wise by the difference in linear momentum of the two objects before impact.
         Matter.Events.on(this.engine, "collisionStart", (event) => {
             for (let pair of event.pairs) {
-                let momentumA = Matter.Vector.mult(pair.bodyA.velocityPrev, pair.bodyA.isStatic ? 0 : pair.bodyA.mass);
-                let momentumB = Matter.Vector.mult(pair.bodyB.velocityPrev, pair.bodyB.isStatic ? 0 : pair.bodyB.mass);
+                let v1 = pair.bodyA.parent.velocityPrev;
+                let v2 = pair.bodyB.parent.velocityPrev;
+                let momentumA = Matter.Vector.mult(v1, pair.bodyA.isStatic ? 0 : pair.bodyA.mass);
+                let momentumB = Matter.Vector.mult(v2, pair.bodyB.isStatic ? 0 : pair.bodyB.mass);
                 let mag = Matter.Vector.magnitude(Matter.Vector.sub(momentumA, momentumB));
+                if (pair.bodyA.parent.label != "Projectile" && pair.bodyB.parent.label != "Projectile") {
+                    if (pair.bodyA.label == "Ground" || pair.bodyB.parent.label == "Ground") {
+                        mag *= 10;
+                    }
+                }
+
                 pair.bodyA.shockAbsorbed = pair.bodyA.shockAbsorbed || 0;
                 pair.bodyA.shockAbsorbed += Math.floor(mag);
                 pair.bodyA.parent.shockAbsorbed = pair.bodyA.parent.shockAbsorbed || 0;
@@ -82,11 +83,7 @@ class Game {
             }
         })
 
-        let floor = Matter.Bodies.rectangle(Game.WIDTH_RATIO * Game.WORLD_SCALE / 2, Game.FLOOR_HEIGHT + 2 * GameObjects.BLOCK_SIZE, Game.WIDTH_RATIO * Game.WORLD_SCALE, 4 * GameObjects.BLOCK_SIZE,
-            { isStatic: true, label: "Ground", friction: 1, render: { sprite: { texture: "images/Grass_Long.png", xScale: 2, yScale: 2 } } });
-
-        Matter.Composite.add(this.engine.world, [floor, this.slingShot, this.slingShot.bodyB, this.mouseConstraint,
-            GameObjects.arch(3000, Game.FLOOR_HEIGHT - 5 * GameObjects.BLOCK_SIZE), GameObjects.arch(3000, Game.FLOOR_HEIGHT - 10 * GameObjects.BLOCK_SIZE), GameObjects.arch(3000 - 5 * GameObjects.BLOCK_SIZE, Game.FLOOR_HEIGHT - 5 * GameObjects.BLOCK_SIZE)])
+        Matter.Composite.add(this.engine.world, [this.generator.getSkeleton(), this.generator.getWorld(), this.mouseConstraint, this.slingShot, this.slingShot.bodyB])
         Matter.Render.run(this.renderer);
         Matter.Runner.run(this.engine);
     }
@@ -97,19 +94,19 @@ class Game {
      * 
      * @returns a matter.js render object
      */
-    #createRenderer() {
+    createRenderer() {
         let pageWidth = document.body.clientWidth;
         let pageHeight = window.innerHeight - 16;
-        if (pageWidth / pageHeight > Game.WIDTH_RATIO / Game.HEIGHT_RATIO) {
-            pageWidth = Game.WIDTH_RATIO * pageHeight / Game.HEIGHT_RATIO
+        if (pageWidth / pageHeight > Generator.WIDTH_RATIO / Generator.HEIGHT_RATIO) {
+            pageWidth = Generator.WIDTH_RATIO * pageHeight / Generator.HEIGHT_RATIO
         } else {
-            pageHeight = Game.HEIGHT_RATIO * pageWidth / Game.WIDTH_RATIO
+            pageHeight = Generator.HEIGHT_RATIO * pageWidth / Generator.WIDTH_RATIO
         }
 
         let render = Matter.Render.create({
             element: document.body,
             engine: this.engine,
-            bounds: Matter.Bounds.create([{ x: 0, y: 0 }, { x: Game.WIDTH_RATIO * Game.RENDER_SCALE, y: 0 }, { x: Game.WIDTH_RATIO * Game.RENDER_SCALE, y: Game.HEIGHT_RATIO * Game.RENDER_SCALE }, { x: 0, y: Game.HEIGHT_RATIO * Game.RENDER_SCALE }]),
+            bounds: Matter.Bounds.create([{ x: 0, y: 0 }, { x: Generator.WIDTH_RATIO * Generator.RENDER_SCALE, y: 0 }, { x: Generator.WIDTH_RATIO * Generator.RENDER_SCALE, y: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE }, { x: 0, y: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE }]),
             hasBounds: true,
             options: {
                 background: "images/background.png",
