@@ -24,6 +24,10 @@ class Game {
 
         this.slingShot = GameObjects.slingShot(this, Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 8, Generator.HEIGHT_RATIO * 3 * Generator.WORLD_SCALE / 4);
 
+
+        this.ground = Matter.Bodies.rectangle(Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 2, Generator.FLOOR_HEIGHT + 2 * GameObjects.BLOCK_SIZE, Generator.WIDTH_RATIO * Generator.WORLD_SCALE, 4 * GameObjects.BLOCK_SIZE,
+            { shockAbsorbed: 0, isStatic: true, label: "Ground", friction: 1, render: { sprite: { texture: "images/Grass_Long.png", xScale: GameObjects.BLOCK_SIZE/32, yScale: GameObjects.BLOCK_SIZE/32 } } });
+
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
         Matter.Events.on(this.engine, 'beforeUpdate', (event) => {
@@ -61,8 +65,8 @@ class Game {
         //pair-wise by the difference in linear momentum of the two objects before impact.
         Matter.Events.on(this.engine, "collisionStart", (event) => {
             for (let pair of event.pairs) {
-                let momentumA = Matter.Vector.mult(pair.bodyA.velocityPrev, pair.bodyA.isStatic ? 0 : pair.bodyA.mass);
-                let momentumB = Matter.Vector.mult(pair.bodyB.velocityPrev, pair.bodyB.isStatic ? 0 : pair.bodyB.mass);
+                let momentumA = Matter.Vector.mult(pair.bodyA.parent.velocityPrev, pair.bodyA.isStatic ? 0 : pair.bodyA.mass);
+                let momentumB = Matter.Vector.mult(pair.bodyB.parent.velocityPrev, pair.bodyB.isStatic ? 0 : pair.bodyB.mass);
                 let mag = Matter.Vector.magnitude(Matter.Vector.sub(momentumA, momentumB));
                 if (pair.bodyA.parent.label != "Projectile" && pair.bodyB.parent.label != "Projectile") {
                     if (pair.bodyA.label == "Ground" || pair.bodyB.parent.label == "Ground") {

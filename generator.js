@@ -123,20 +123,18 @@ class Generator {
         var darch = Generator.doubleArch(Generator.STRUCT_SIZE, -2 * Generator.STRUCT_SIZE);
 
         let stack = Generator.stackStructures(0, 0, [
-            [1, 1, 1],
-            [1, 1, 1],
-            [1, 1, 1],
+            [1, 0, 0],
+            [1, 0, 0],
+            [1, 0, 1],
             [1, 1, 1],
             [1, 1, 1]
         ], Generator.arch);
 
         Matter.Composite.add(world, stack);
-        // Matter.Composite.add(world, [arch, dpillars, tpillars, box, darch]);
+        //Matter.Composite.add(world, [arch, dpillars, tpillars, box, darch]);
 
         this.translateGround(world);
 
-
-        console.dir(world);
 
         return world;
     }
