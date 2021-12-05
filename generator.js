@@ -3,7 +3,7 @@
 
 class Generator {
 
-    static SEED = 1;
+    static SEED = 1; //The initial seed for level generation
 
     static WIDTH_RATIO = 2; //The unit width of the game-world, render bounds, and display canvas
 
