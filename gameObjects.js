@@ -26,7 +26,7 @@ class GameObjects {
             activatePower: undefined,
             frictionAir: 0.005,
             sleepThreshold: 3000 / 16.666,
-            density: 0.005
+            density: 0.007
         });
 
         return body
@@ -69,6 +69,9 @@ class GameObjects {
                 render = { visible: false }
             } else {
                 render = { sprite: { texture: `images/Material Texture/${material}/${texture}.png`, xScale: GameObjects.BLOCK_SIZE / 64, yScale: GameObjects.BLOCK_SIZE / 64 } }
+                if(material == "glass"){
+                    render.opacity = 0.75
+                }
             }
             return Matter.Bodies.rectangle(x, y, GameObjects.BLOCK_SIZE, GameObjects.BLOCK_SIZE, { render: render});
         })

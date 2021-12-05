@@ -31,6 +31,7 @@ class Game {
             for (let body of bodies) {
                 for (let part of body.parts) {
                     if (part.label == "Projectile" && part.isSleeping) {
+                        new Audio(`sounds/sfx-pop${Matter.Common.choose(["", 3, 4, 5, 6])}.mp3`).play()
                         Matter.Composite.remove(this.engine.world, part, true)
                     } else {
                         part.velocityPrev = part.velocity;
