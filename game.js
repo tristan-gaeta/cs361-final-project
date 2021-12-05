@@ -14,7 +14,7 @@ class Game {
      * and renderer are run on creation.
      */
     constructor() {
-        this.engine = Matter.Engine.create({ enableSleeping: true, });
+        this.engine = Matter.Engine.create({ enableSleeping: true });
 
         this.renderer = this.createRenderer();
 
@@ -22,7 +22,9 @@ class Game {
 
         this.mouseConstraint = GameObjects.mouseConstraint(this);
 
-        this.slingShot = GameObjects.slingShot(this, Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 8, Generator.HEIGHT_RATIO * 2 * Generator.WORLD_SCALE / 3);
+        this.ground = Matter.Bodies.rectangle(Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 2, Generator.FLOOR_HEIGHT + 250, Generator.WIDTH_RATIO * Generator.WORLD_SCALE, 500, { isStatic: true, label: "Ground", friction: 1, render: { opacity: 0.5 } });
+
+        this.slingShot = GameObjects.slingShot(this, Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 8, Generator.HEIGHT_RATIO * Generator.WORLD_SCALE / 3);
 
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
@@ -49,8 +51,7 @@ class Game {
                     }
                 }
                 if (body.label == "Block") {
-                    if (body.shockAbsorbed > body.hp) {
-                        new Audio(`sounds/sfx-pop${Matter.Common.choose(["", 3, 4, 5, 6])}.mp3`).play()
+                    if (body.shockAbsorbed > 500) {
                         Matter.Composite.remove(event.source.world, body, true)
                     }
                 }
@@ -61,17 +62,9 @@ class Game {
         //pair-wise by the difference in linear momentum of the two objects before impact.
         Matter.Events.on(this.engine, "collisionStart", (event) => {
             for (let pair of event.pairs) {
-                let v1 = pair.bodyA.parent.velocityPrev;
-                let v2 = pair.bodyB.parent.velocityPrev;
-                let momentumA = Matter.Vector.mult(v1, pair.bodyA.isStatic ? 0 : pair.bodyA.mass);
-                let momentumB = Matter.Vector.mult(v2, pair.bodyB.isStatic ? 0 : pair.bodyB.mass);
+                let momentumA = Matter.Vector.mult(pair.bodyA.velocityPrev, pair.bodyA.isStatic ? 0 : pair.bodyA.mass);
+                let momentumB = Matter.Vector.mult(pair.bodyB.velocityPrev, pair.bodyB.isStatic ? 0 : pair.bodyB.mass);
                 let mag = Matter.Vector.magnitude(Matter.Vector.sub(momentumA, momentumB));
-                if (pair.bodyA.parent.label != "Projectile" && pair.bodyB.parent.label != "Projectile") {
-                    if (pair.bodyA.label == "Ground" || pair.bodyB.parent.label == "Ground") {
-                        mag *= 10;
-                    }
-                }
-
                 pair.bodyA.shockAbsorbed = pair.bodyA.shockAbsorbed || 0;
                 pair.bodyA.shockAbsorbed += Math.floor(mag);
                 pair.bodyA.parent.shockAbsorbed = pair.bodyA.parent.shockAbsorbed || 0;
@@ -84,7 +77,8 @@ class Game {
             }
         })
 
-        Matter.Composite.add(this.engine.world, [this.generator.getSkeleton(), this.generator.getWorld(), this.mouseConstraint, this.slingShot, this.slingShot.bodyB])
+
+        Matter.Composite.add(this.engine.world, [this.generator.getWorld(), this.ground, this.mouseConstraint, this.slingShot, this.slingShot.bodyB])
         Matter.Render.run(this.renderer);
         Matter.Runner.run(this.engine);
     }
