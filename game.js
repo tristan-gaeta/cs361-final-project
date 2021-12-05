@@ -70,7 +70,7 @@ class Game {
                 let mag = Matter.Vector.magnitude(Matter.Vector.sub(momentumA, momentumB));
                 if (pair.bodyA.parent.label != "Projectile" && pair.bodyB.parent.label != "Projectile") {
                     if (pair.bodyA.label == "Ground" || pair.bodyB.parent.label == "Ground") {
-                        mag *= 10;
+                        mag *= 15;
                     }
                 }
 
