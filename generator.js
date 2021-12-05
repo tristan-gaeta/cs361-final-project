@@ -16,7 +16,6 @@ class Generator {
     static FLOOR_HEIGHT = Generator.HEIGHT_RATIO * Generator.WORLD_SCALE - 2 * GameObjects.BLOCK_SIZE;
 
     static STRUCT_SIZE = GameObjects.BLOCK_SIZE * 5;
-    // let texture = Matter.Common.choose(["Glass/", "Metal/", "Stone/", "Wood/"]);
 
     static arch(x = 0, y = 0) {
         let texture = Matter.Common.choose(["glass", "metal", "stone", "wood"]);
