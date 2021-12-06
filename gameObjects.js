@@ -6,9 +6,9 @@
  * 
  */
 class GameObjects {
-    static _PRE_SHOT_COLLISION_FILTER = { 'group': 2, 'category': 0b0000, 'mask': 0b0000 }
+    static _PRE_SHOT_COLLISION_FILTER = { 'group': 1, 'category': 0b0010, 'mask': 0b0000 }
 
-    static _POST_SHOT_COLLISION_FILTER = { 'group': 1, 'category': 0b0001, 'mask': -1 }
+    static _POST_SHOT_COLLISION_FILTER = { 'group': 0, 'category': 0b0010, 'mask': -1 }
 
     static BLOCK_SIZE = 64;
 
@@ -25,7 +25,7 @@ class GameObjects {
             launched: false,
             activatePower: undefined,
             frictionAir: 0.005,
-            sleepThreshold: 3000 / 16.666,
+            sleepThreshold: 1500 / 16.666,
             density: 0.007
         });
 
@@ -75,7 +75,7 @@ class GameObjects {
             }
             return Matter.Bodies.rectangle(x, y, GameObjects.BLOCK_SIZE, GameObjects.BLOCK_SIZE, { render: render});
         })
-        let body = Matter.Body.create({ label: "Block", hp: hp, parts: comp.bodies, shockAbsorbed: 0, sleepThreshold: 2, frictionAir: 0.9, mass: 1})
+        let body = Matter.Body.create({ label: "Block", hp: hp, parts: comp.bodies, shockAbsorbed: 0, sleepThreshold: 1, frictionAir: 0.9, mass: 1})
         Matter.Body.setPosition(body, { x: x, y: y })
         Matter.Events.on(body,"sleepStart", (event)=>{
             Matter.Body.setDensity(event.source,0.001)
@@ -110,7 +110,7 @@ class GameObjects {
             pointA: { x: x, y: y },
             bodyB: GameObjects.projectile(x, y),
             length: 0,
-            stiffness: 0.009,
+            stiffness: 0.005,
             render: {
                 type: "line",
                 anchors: false,
@@ -131,6 +131,7 @@ class GameObjects {
                 let offset = Matter.Vector.mult(diff, 1 - GameObjects.SLING_SHOT_LENGTH / mag);
                 let newPos = Matter.Vector.sub(constraint.bodyB.position, offset);
                 Matter.Body.setPosition(constraint.bodyB, newPos);
+                Matter.Body.setAngularVelocity(constraint.bodyB, 0)
             }
             //check for launch
             if (constraint.bodyB.launched) {
@@ -139,9 +140,6 @@ class GameObjects {
                 if (dist < constraint.bodyB.circleRadius && prevDist > constraint.bodyB.circleRadius) {
                     constraint.bodyB.collisionFilter = GameObjects._POST_SHOT_COLLISION_FILTER;
                     constraint.bodyB = GameObjects.projectile(constraint.pointA.x, constraint.pointA.y)
-                    setTimeout(() => {
-                        Matter.Composite.add(game.engine.world, constraint.bodyB)
-                    }, 500);
                 }
             }
 

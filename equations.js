@@ -92,7 +92,7 @@ class Equations {
                     left = this.left;
                 } else {
                     left = this.left.string;
-                } 
+                }
                 if (typeof this.right == "number") {
                     right = this.right;
                 } else {
@@ -339,7 +339,10 @@ class Equations {
      * @param {number} difficulty 
      * @returns {object}
      */
-    static createProblem(difficulty) {
+    static createProblem(difficulty = 0) {
+        if (typeof difficulty != "number") {
+            throw "Difficulty must be a positive number."
+        }
         let numOps = Equations.#getNumOperations(difficulty);
         let ops = [];
         for (let i = 0; i < numOps; i++) {

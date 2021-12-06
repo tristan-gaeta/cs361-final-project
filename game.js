@@ -14,7 +14,7 @@ class Game {
      * and renderer are run on creation.
      */
     constructor() {
-        this.engine = Matter.Engine.create({ enableSleeping: true });
+        this.engine = Matter.Engine.create({ enableSleeping: true, velocityIterations: 10, positionIterations: 10 });
 
         this.renderer = this.createRenderer();
 
@@ -24,9 +24,14 @@ class Game {
 
         this.slingShot = GameObjects.slingShot(this, Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 8, Generator.HEIGHT_RATIO * 3 * Generator.WORLD_SCALE / 4);
 
+        this.leftWall = Matter.Bodies.rectangle(-2 * GameObjects.BLOCK_SIZE, Generator.HEIGHT_RATIO * Generator.WORLD_SCALE / 2, 4 * GameObjects.BLOCK_SIZE, 2 * Generator.HEIGHT_RATIO * Generator.WORLD_SCALE,
+            { isStatic: true, label: "Wall", friction: 1, render: { visible: false }, collisionFilter: { 'group': 1, 'category': 0b0010, 'mask': 4294967293 } });
+
+        this.rightWall = Matter.Bodies.rectangle(Generator.WIDTH_RATIO * Generator.WORLD_SCALE + 2 * GameObjects.BLOCK_SIZE, Generator.HEIGHT_RATIO * Generator.WORLD_SCALE / 2, 4 * GameObjects.BLOCK_SIZE, 2 * Generator.HEIGHT_RATIO * Generator.WORLD_SCALE,
+            { isStatic: true, label: "Wall", friction: 1, render: { visible: false }, collisionFilter: { 'group': 1, 'category': 0b0010, 'mask': 4294967293 } });
 
         this.ground = Matter.Bodies.rectangle(Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 2, Generator.FLOOR_HEIGHT + 2 * GameObjects.BLOCK_SIZE, Generator.WIDTH_RATIO * Generator.WORLD_SCALE, 4 * GameObjects.BLOCK_SIZE,
-            { shockAbsorbed: 0, isStatic: true, label: "Ground", friction: 1, render: { sprite: { texture: "images/Grass_Long.png", xScale: GameObjects.BLOCK_SIZE/32, yScale: GameObjects.BLOCK_SIZE/32 } } });
+            { isStatic: true, label: "Ground", friction: 1, render: { sprite: { texture: "images/Grass_Long.png", xScale: GameObjects.BLOCK_SIZE / 32, yScale: GameObjects.BLOCK_SIZE / 32 } } });
 
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
@@ -46,6 +51,7 @@ class Game {
 
         Matter.Events.on(this.engine, "afterUpdate", (event) => {
             let bodies = Matter.Composite.allBodies(event.source.world)
+            let levelOver = true;
             for (let body of bodies) {
                 if (body.parts.length > 1) {
                     for (let part of body.parts) {
@@ -53,11 +59,23 @@ class Game {
                     }
                 }
                 if (body.label == "Block") {
+                    levelOver = false;
                     if (body.shockAbsorbed > body.hp) {
                         new Audio(`sounds/sfx-pop${Matter.Common.choose(["", 3, 4, 5, 6])}.mp3`).play()
                         Matter.Composite.remove(event.source.world, body, true)
                     }
+                } else if (body.label == "Projectile") {
+                    levelOver = false;
+                    if (body.bounds.min.y > Generator.HEIGHT_RATIO * Generator.WORLD_SCALE || body.bounds.min.x > Generator.WIDTH_RATIO * Generator.WORLD_SCALE || body.bounds.max.x < 0) {
+                        Matter.Composite.remove(event.source.world, body, true)
+                    }
                 }
+            }
+
+            if (levelOver) {
+                Matter.Composite.remove(this.engine.world, this.engine.world.composites, true);
+                Matter.Composite.add(this.engine.world, this.generator.nextLevel())
+
             }
         })
 
@@ -87,7 +105,7 @@ class Game {
         })
 
 
-        Matter.Composite.add(this.engine.world, [this.generator.getWorld(), this.ground, this.mouseConstraint, this.slingShot, this.slingShot.bodyB])
+        Matter.Composite.add(this.engine.world, [this.generator.nextLevel(), this.ground, this.leftWall, this.rightWall, this.mouseConstraint, this.slingShot])
         Matter.Render.run(this.renderer);
         Matter.Runner.run(this.engine);
     }
@@ -99,7 +117,7 @@ class Game {
      * @returns a matter.js render object
      */
     createRenderer() {
-        let pageWidth = document.body.clientWidth;
+        let pageWidth = window.innerWidth - 16;
         let pageHeight = window.innerHeight - 16;
         if (pageWidth / pageHeight > Generator.WIDTH_RATIO / Generator.HEIGHT_RATIO) {
             pageWidth = Generator.WIDTH_RATIO * pageHeight / Generator.HEIGHT_RATIO
@@ -114,7 +132,7 @@ class Game {
             hasBounds: true,
             options: {
                 background: "images/background.png",
-                showDebug: true,
+                //showDebug: true,
                 showSleeping: false,
                 width: pageWidth,
                 height: pageHeight,
