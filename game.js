@@ -33,6 +33,11 @@ class Game {
         this.ground = Matter.Bodies.rectangle(Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 2, Generator.FLOOR_HEIGHT + 2 * GameObjects.BLOCK_SIZE, Generator.WIDTH_RATIO * Generator.WORLD_SCALE, 4 * GameObjects.BLOCK_SIZE,
             { isStatic: true, label: "Ground", friction: 1, render: { sprite: { texture: "images/Grass_Long.png", xScale: GameObjects.BLOCK_SIZE / 32, yScale: GameObjects.BLOCK_SIZE / 32 } } });
 
+        this.streaks = 0;
+
+        this.difficulty = 0;
+
+
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
         Matter.Events.on(this.engine, 'beforeUpdate', (event) => {

@@ -141,6 +141,7 @@ class Generator {
         let diff = { x: Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 2, y: Generator.FLOOR_HEIGHT - 5*Generator.STRUCT_SIZE}
         Matter.Composite.translate(comp, diff, true);
 
+        this.level++;
         return comp;
     }
 
