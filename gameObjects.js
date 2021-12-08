@@ -26,7 +26,6 @@ class GameObjects {
       "images/balls/Banana-Ball.png",
       "images/balls/Death-Ball.png",
       "images/balls/Red-Ball.png",
-      "images/balls/Star-Ball.png",
     ]);
     let body = Matter.Bodies.circle(x, y, GameObjects.BLOCK_SIZE / 2, {
       render: {

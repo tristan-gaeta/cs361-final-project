@@ -225,8 +225,9 @@ class Game {
       hasBounds: true,
       options: {
         background: Matter.Common.choose([
-          "images/Backgrounds/Cave-Background.png",
+          //TODO need to have these switch randomly
           "images/Backgrounds/Forest-Background.png",
+          "images/Backgrounds/Cave-Background.png",
         ]),
         //showDebug: true,
         showSleeping: false,
@@ -239,3 +240,4 @@ class Game {
     return render;
   }
 }
+//console.log(document.querySelector("div")); //Remove
