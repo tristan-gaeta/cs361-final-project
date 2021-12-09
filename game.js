@@ -71,7 +71,7 @@ class Game {
         friction: 1,
         render: {
           sprite: {
-            texture: "images/Backgrounds/Grass_Long.png",
+            texture: "images/Backgrounds/Cave-Floor.png",
             xScale: GameObjects.BLOCK_SIZE / 32,
             yScale: GameObjects.BLOCK_SIZE / 32,
           },

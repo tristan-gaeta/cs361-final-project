@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="format.css"/>
+    <link rel="stylesheet" href="format.css" />
     <title>CS 240 Final Project</title>
 </head>
+
 <body style="margin: 8px;">
     <script src="node_modules/matter-js/build/matter.js"></script>
     <script src="equations.js"></script>
@@ -14,13 +16,48 @@
     <script src="generator.js"></script>
     <script src="game.js"></script>
     <script src="app.js"></script>
-    <div id = "main"> 
+    <script src="mainPage.js"></script>
 
-    <table class = "table">
-           <th>Options</th>   
+    <div id="main">
+
+        <table id="mainTable" style="width: 25%;">
+            <th class="header">Statistics</th>
+            <tr>
+                <td>High Score: </td>
+                <td id="highScore"></td>
+            </tr>
+            <tr>
+                <td>Highest Streak: </td>
+                <td id="highStreak"></td>
+            </tr>
+            <tr>
+                <td>Total Damage: </td>
+                <td id=totalDamage></td>
+            </tr>
+            <th class="header">Options</th>
+            <tr id="musicOptions">
+                <td>
+                    <span>
+                        Music:
+                        <button id="pop" onclick=playMusic() > ▶ </button>
+                    </span>
+
+
+
+                </td>
+            </tr>
+            <tr>
+            </tr>
+            <tr align="center">
+                <td>
+                    <button id="ballButton">Next Ball!</button>
+                </td>
+            </tr>
+
         </table>
     </div>
-    
+
 
 </body>
+
 </html>
