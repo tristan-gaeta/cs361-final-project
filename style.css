@@ -1,0 +1,9 @@
+canvas{
+    float: left;
+    width: 80%;
+}
+table{
+    float: right;
+    width: 19%;
+    background-image: url(images/Rocks.png);
+}

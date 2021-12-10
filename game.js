@@ -37,6 +37,19 @@ class Game {
 
         this.difficulty = 0;
 
+        this.statsCanvas = document.createElement("canvas");
+        this.statsCanvas.width =  this.renderer.canvas.width;
+        this.statsCanvas.height =  this.renderer.canvas.height / 4;
+        let ctx =  this.statsCanvas.getContext("2d")
+        ctx.textAlign = "center"
+        ctx.font = `800% arial`
+        ctx.fillText("Press SPACE for a ball.",  this.statsCanvas.width / 6,  this.statsCanvas.height / 4)
+        this.statsCanvas.style = "position: absolute; left: 8px; top: 8px; z-index: 1;"
+
+
+        let div = document.querySelector("div")
+        div.appendChild(this.statsCanvas)
+
 
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
@@ -122,16 +135,9 @@ class Game {
      * @returns a matter.js render object
      */
     createRenderer() {
-        let pageWidth = window.innerWidth - 16;
-        let pageHeight = window.innerHeight - 16;
-        if (pageWidth / pageHeight > Generator.WIDTH_RATIO / Generator.HEIGHT_RATIO) {
-            pageWidth = Generator.WIDTH_RATIO * pageHeight / Generator.HEIGHT_RATIO
-        } else {
-            pageHeight = Generator.HEIGHT_RATIO * pageWidth / Generator.WIDTH_RATIO
-        }
 
         let render = Matter.Render.create({
-            element: document.body,
+            element: document.querySelector("div"),
             engine: this.engine,
             bounds: Matter.Bounds.create([{ x: 0, y: 0 }, { x: Generator.WIDTH_RATIO * Generator.RENDER_SCALE, y: 0 }, { x: Generator.WIDTH_RATIO * Generator.RENDER_SCALE, y: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE }, { x: 0, y: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE }]),
             hasBounds: true,
@@ -139,8 +145,8 @@ class Game {
                 background: "images/background.png",
                 //showDebug: true,
                 showSleeping: false,
-                width: pageWidth,
-                height: pageHeight,
+                width: Generator.WIDTH_RATIO*Generator.RENDER_SCALE,
+                height: Generator.HEIGHT_RATIO*Generator.RENDER_SCALE,
                 wireframes: false,
                 wireframeBackground: false,
             },

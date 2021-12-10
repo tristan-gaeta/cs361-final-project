@@ -101,7 +101,7 @@ class Generator {
     }
 
     constructor() {
-        this._seed = 4660;
+        this._seed = 339;
         this.level = 0;
     }
 
@@ -138,7 +138,7 @@ class Generator {
             struct.push(col)
         }
         let comp = Generator.stackStructures(0, 0, struct, Generator.box)
-        let diff = { x: Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 2, y: Generator.FLOOR_HEIGHT - 5*Generator.STRUCT_SIZE}
+        let diff = { x: Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 2 - Generator.STRUCT_SIZE, y: Generator.FLOOR_HEIGHT - 5*Generator.STRUCT_SIZE}
         Matter.Composite.translate(comp, diff, true);
 
         this.level++;
