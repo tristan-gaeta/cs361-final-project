@@ -72,7 +72,7 @@ class Generator {
         return comp
     }
 
-    static stackStructures(xx, yy, layout, callback) {
+    static stackStructures(xx, yy, layout) {
         let stack = Matter.Composite.create(),
             x = xx,
             y = yy
@@ -80,7 +80,8 @@ class Generator {
         for (let column = 0; column < layout.length; column++) {
             for (let row = 0; row < layout[row].length; row++) {
                 if (layout[column][row]) {
-                    let comp = callback(x, y);
+                    console.log(layout[column][row]);
+                    let comp = layout[column][row][0](x, y,layout[column][row][1]);
 
                     if (comp) {
                         Matter.Composite.add(stack, comp);
@@ -96,7 +97,7 @@ class Generator {
     }
 
     constructor() {
-        this._seed = 4660;
+        this._seed = 20;
         this.level = 0;
     }
 
@@ -120,20 +121,25 @@ class Generator {
     }
 
     nextLevel() {
-        let struct = []
+        let struct = [];
         for (let i = 0; i < 6; i++) {
-            let col = []
+            let col = [];
             let rows = this.#nextHeight(this.level);
             for (let j = 0; j < 5 - rows; j++) {
-                col.push(0)
+                col.push(undefined);
             }
             for (let j = 0; j < rows; j++) {
-                col.push(1)
+                let structs = [Generator.box, Generator.arch, Generator.doubleArch, Generator.doubleArch, Generator.tripillars];
+                let rand1 = Math.floor(this.#next() * structs.length);
+
+                let textures = ["glass","wood","stone","metal"];
+                let rand2 = Math.floor(this.#next() * textures.length);
+                col.push([structs[rand1],textures[rand2]]);
             }
-            struct.push(col)
+            struct.push(col);
         }
-        let comp = Generator.stackStructures(0, 0, struct, Generator.box)
-        let diff = { x: Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 2, y: Generator.FLOOR_HEIGHT - 5*Generator.STRUCT_SIZE}
+        let comp = Generator.stackStructures(0, 0, struct, Generator.box);
+        let diff = { x: Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 2 - Generator.STRUCT_SIZE, y: Generator.FLOOR_HEIGHT - 5 * Generator.STRUCT_SIZE }
         Matter.Composite.translate(comp, diff, true);
 
         this.level++;
