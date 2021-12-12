@@ -80,7 +80,6 @@ class Generator {
         for (let column = 0; column < layout.length; column++) {
             for (let row = 0; row < layout[row].length; row++) {
                 if (layout[column][row]) {
-                    console.log(layout[column][row]);
                     let comp = layout[column][row][0](x, y,layout[column][row][1]);
 
                     if (comp) {

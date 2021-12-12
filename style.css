@@ -1,9 +1,26 @@
-canvas{
-    float: left;
-    width: 80%;
+body{
+    background-color: cadetblue;
 }
-table{
-    float: right;
-    width: 19%;
-    background-image: url(images/Rocks.png);
+canvas {
+  float: left;
+  width: 80%;
+}
+table {
+  float: right;
+  width: 19%;
+  background-image: url(images/Material\ Texture/Wood/wood-Whole.png);
+  align-items: center;
+  color:goldenrod;
+  text-shadow: 2px 2px black;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 150%;
+}
+.header {
+  font-size: 180%;
+}
+
+button {
+  align-self: center;
+  color: white;
+  background-image: url(images/Material\ Texture/Stone/Stone-Whole.png);
 }

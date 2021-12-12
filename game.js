@@ -31,23 +31,23 @@ class Game {
             { isStatic: true, label: "Wall", friction: 1, render: { visible: false }, collisionFilter: { 'group': 1, 'category': 0b0010, 'mask': 4294967293 } });
 
         this.ground = Matter.Bodies.rectangle(Generator.WIDTH_RATIO * Generator.WORLD_SCALE / 2, Generator.FLOOR_HEIGHT + 2 * GameObjects.BLOCK_SIZE, Generator.WIDTH_RATIO * Generator.WORLD_SCALE, 4 * GameObjects.BLOCK_SIZE,
-            { isStatic: true, label: "Ground", friction: 1, render: { sprite: { texture: "images/Grass_Long.png", xScale: GameObjects.BLOCK_SIZE / 32, yScale: GameObjects.BLOCK_SIZE / 32 } } });
+            { isStatic: true, label: "Ground", friction: 1, render: { sprite: { texture: "images/Backgrounds/Grass_Long.png", xScale: GameObjects.BLOCK_SIZE / 32, yScale: GameObjects.BLOCK_SIZE / 32 } } });
 
         this.streaks = 0;
 
         this.difficulty = 0;
 
         this.statsCanvas = document.createElement("canvas");
-        this.statsCanvas.width =  this.renderer.canvas.width;
-        this.statsCanvas.height =  this.renderer.canvas.height / 4;
-        let ctx =  this.statsCanvas.getContext("2d")
+        this.statsCanvas.width = this.renderer.canvas.width;
+        this.statsCanvas.height = this.renderer.canvas.height / 4;
+        let ctx = this.statsCanvas.getContext("2d")
         ctx.textAlign = "center"
         ctx.font = `800% arial`
-        ctx.fillText("Press SPACE for a ball.",  this.statsCanvas.width / 6,  this.statsCanvas.height / 4)
+        ctx.fillText("Press SPACE for a ball.", this.statsCanvas.width / 6, this.statsCanvas.height / 4)
         this.statsCanvas.style = "position: absolute; left: 8px; top: 8px; z-index: 1;"
 
 
-        let div = document.querySelector("div")
+        let div = document.body
         div.appendChild(this.statsCanvas)
 
 
@@ -137,16 +137,16 @@ class Game {
     createRenderer() {
 
         let render = Matter.Render.create({
-            element: document.querySelector("div"),
+            element: document.body,
             engine: this.engine,
             bounds: Matter.Bounds.create([{ x: 0, y: 0 }, { x: Generator.WIDTH_RATIO * Generator.RENDER_SCALE, y: 0 }, { x: Generator.WIDTH_RATIO * Generator.RENDER_SCALE, y: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE }, { x: 0, y: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE }]),
             hasBounds: true,
             options: {
-                background: "images/background.png",
+                background: "images/Backgrounds/forest-Background.png",
                 //showDebug: true,
                 showSleeping: false,
-                width: Generator.WIDTH_RATIO*Generator.RENDER_SCALE,
-                height: Generator.HEIGHT_RATIO*Generator.RENDER_SCALE,
+                width: Generator.WIDTH_RATIO * Generator.RENDER_SCALE,
+                height: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE,
                 wireframes: false,
                 wireframeBackground: false,
             },
