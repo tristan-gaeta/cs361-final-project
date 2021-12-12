@@ -105,7 +105,7 @@ class Game {
                 let momentumB = Matter.Vector.mult(pair.bodyB.parent.velocityPrev, pair.bodyB.isStatic ? 0 : pair.bodyB.mass);
                 let mag = Matter.Vector.magnitude(Matter.Vector.sub(momentumA, momentumB));
                 if (pair.bodyA.parent.label != "Projectile" && pair.bodyB.parent.label != "Projectile") {
-                    if (pair.bodyA.label == "Ground" || pair.bodyB.parent.label == "Ground") {
+                    if (pair.bodyA.parent.label == "Ground" || pair.bodyB.parent.label == "Ground") {
                         mag *= 15;
                     }
                 }
