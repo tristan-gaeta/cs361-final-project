@@ -1,0 +1,17 @@
+#mainTable {
+  background-color: blue;
+  color: white;
+  float: right;
+  font-size: 12pt;
+}
+
+.header{
+  color:goldenrod;
+  font-size: 20pt;
+}
+
+#ballButton{
+  align-self: center;
+  color: blue;
+  height: 1cm;
+}
