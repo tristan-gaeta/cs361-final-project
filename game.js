@@ -81,6 +81,7 @@ class Game {
                     if (body.shockAbsorbed > body.hp) {
                         new Audio(`sounds/sfx-pop${Matter.Common.choose(["", 3, 4, 5, 6])}.mp3`).play()
                         Matter.Composite.remove(event.source.world, body, true)
+                        game.updateDamage(body.hp);
                     }
                 } else if (body.label == "Projectile") {
                     levelOver = false;
@@ -132,7 +133,32 @@ class Game {
         Matter.Composite.add(this.engine.world, comp);
         this.ground.render.sprite.texture = comp.ground;
         this.renderer.options.background = comp.background;
+        this.clearDamage();
     }
+
+    updateStreak(s) {
+        let streak = document.getElementById("streak");
+        streak.innerHTML = s;
+    }
+
+    updateScore(s) {
+        let score = document.getElementById("score");
+        let temp = Number(score.innerHTML);
+        score.innerHTML = s + temp;
+    }
+
+    updateDamage(s) {
+        let damage = document.getElementById("damage");
+        let temp = Number(damage.innerHTML);
+        damage.innerHTML = s + temp;
+        this.updateScore(s);
+    }
+
+    clearDamage(){
+        let damage = document.getElementById("damage");
+        damage.innerHTML = 0;
+    }
+
 
     /**
      * @description this method creates a renderer object and maximizes the canvas

@@ -13,23 +13,29 @@
       <table id="mainTable">
         <th class="header">Statistics</th>
         <tr>
-          <td>High Score:</td>
+          <td>Streak:</td>
+          <td id="streak"></td>
         </tr>
         <tr>
-          <td>Highest Streak:</td>
+          <td>Score:</td>
+          <td id="score"></td>
         </tr>
         <tr>
-          <td>Total Damage:</td>
+          <td>Damage:</td>
+          <td id="damage"></td>
         </tr>
         <th class="header">Options</th>
         <tr id="musicOptions">
           <td>
-              Music:<button id="musicButton" onclick="playMusic()">▶</button>
+            Music:<button id="musicButton" onclick="playMusic()">▶</button>
           </td>
         </tr>
         <tr align="center">
           <td>
-            <button id="ballButton">Next Ball!</button>
+            <button id="ballButton" onclick="ballPrompt()">Next Ball!</button>
+            <button id="roundButton" onclick="game.skipRound()">
+              Next Level!
+            </button>
           </td>
         </tr>
       </table>

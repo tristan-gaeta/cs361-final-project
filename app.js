@@ -1,6 +1,12 @@
 var game = new Game();
 addEventListener("keypress", (event) => {
-    if (event.key == " " && !game.slingShot.bodyB.velocityPrev) {
+    if(event.key == " "){
+        ballPrompt();
+    }
+});
+
+function ballPrompt() {
+    if (!game.slingShot.bodyB.velocityPrev) {
         let equation = Equations.createProblem(game.difficulty);
         let ans = window.prompt(`${equation.string.substring(1, equation.string.length - 1)} = `);
         if (ans == equation.value) {
@@ -13,8 +19,11 @@ addEventListener("keypress", (event) => {
             game.difficulty = Math.floor(game.difficulty)
             game.streaks = 0;
         }
+        game.updateStreak(game.streaks);
     }
-})
+}
+
+
 var audio = new Audio("sounds/Cloud Armada-TestSong.mp3");
 var counter = true;
 var button = document.querySelector("#musicButton");
