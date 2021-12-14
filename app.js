@@ -12,7 +12,7 @@ function ballPrompt() {
         if (ans == equation.value) {
             Matter.Composite.add(game.engine.world, game.slingShot.bodyB);
             game.streaks++;
-            game.difficulty += Math.round(game.streaks/5);
+            game.difficulty += Math.round(game.streaks / 5);
         } else {
             let diff = 1 - 1 / (game.streaks + 2);
             game.difficulty *= diff;
@@ -25,6 +25,7 @@ function ballPrompt() {
 
 
 var audio = new Audio("sounds/Cloud Armada-TestSong.mp3");
+audio.loop = true;
 var counter = true;
 var button = document.querySelector("#musicButton");
 console.log(button);

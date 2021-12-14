@@ -4,6 +4,7 @@ body{
 canvas {
   float: left;
   width: 80%;
+  border: 2px  black solid;
 }
 table {
   float: right;
@@ -14,6 +15,7 @@ table {
   text-shadow: 2px 2px black;
   font-family: 'Courier New', Courier, monospace;
   font-size: 1.5vw;
+  border: 2px  black solid;
 }
 .header {
   font-size: 2vw;
