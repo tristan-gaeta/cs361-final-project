@@ -91,9 +91,7 @@ class Game {
             }
 
             if (levelOver) {
-                Matter.Composite.remove(this.engine.world, this.engine.world.composites, true);
-                Matter.Composite.add(this.engine.world, this.generator.nextLevel())
-
+                this.skipRound();
             }
         })
 
@@ -126,6 +124,14 @@ class Game {
         Matter.Composite.add(this.engine.world, [this.generator.nextLevel(), this.ground, this.leftWall, this.rightWall, this.mouseConstraint, this.slingShot])
         Matter.Render.run(this.renderer);
         Matter.Runner.run(this.engine);
+    }
+
+    skipRound() {
+        Matter.Composite.remove(this.engine.world, this.engine.world.composites, true);
+        let comp = this.generator.nextLevel();
+        Matter.Composite.add(this.engine.world, comp);
+        this.ground.render.sprite.texture = comp.ground;
+        this.renderer.options.background = comp.background;
     }
 
     /**

@@ -13,10 +13,10 @@ table {
   color:goldenrod;
   text-shadow: 2px 2px black;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 150%;
+  font-size: 1.5vw;
 }
 .header {
-  font-size: 180%;
+  font-size: 2vw;
 }
 
 button {
