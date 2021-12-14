@@ -14,15 +14,15 @@
         <th class="header">Statistics</th>
         <tr>
           <td>Streak:</td>
-          <td id="streak"></td>
+          <td id="streak">0</td>
         </tr>
         <tr>
           <td>Score:</td>
-          <td id="score"></td>
+          <td id="score">0</td>
         </tr>
         <tr>
           <td>Damage:</td>
-          <td id="damage"></td>
+          <td id="damage">0</td>
         </tr>
         <th class="header">Options</th>
         <tr id="musicOptions">
@@ -30,12 +30,11 @@
             Music:<button id="musicButton" onclick="playMusic()">▶</button>
           </td>
         </tr>
-        <tr align="center">
+        <th class="header">Game</th>
+        <tr>
           <td>
             <button id="ballButton" onclick="ballPrompt()">Next Ball!</button>
-            <button id="roundButton" onclick="game.skipRound()">
-              Next Level!
-            </button>
+            <button id="roundButton" onclick="game.skipRound()">Next Level!</button>
           </td>
         </tr>
       </table>

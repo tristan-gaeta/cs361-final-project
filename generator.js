@@ -52,6 +52,46 @@ class Generator {
         return comp
     }
 
+        static blob(x = 0, y = 0, texture = "glass") {
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure", width: 1, height: 1 });
+        let bigtop = Matter.Composites.stack(0, 0, 1, 1, 0, 0, (x, y) => {
+            return GameObjects.rect(x, y, 5, 2, texture);
+        });
+        let small = Matter.Composites.stack(GameObjects.BLOCK_SIZE, 2 * GameObjects.BLOCK_SIZE, 1, 1, 0, 0, (x, y) => {
+            return GameObjects.rect(x, y, 3, 1, texture);
+        });
+        let squares = Matter.Composites.stack(0, 3 * GameObjects.BLOCK_SIZE, 2, 1, GameObjects.BLOCK_SIZE, 0, (x, y) => {
+            return GameObjects.rect(x, y, 2, 2, texture);
+        });
+        Matter.Composite.move(bigtop, Matter.Composite.allBodies(bigtop), comp);
+        Matter.Composite.move(small, Matter.Composite.allBodies(small), comp);
+        Matter.Composite.move(squares, Matter.Composite.allBodies(squares), comp);
+        Matter.Composite.translate(comp, { x: x, y: y })
+        return comp
+    }
+
+    static blob2(x = 0, y = 0, texture = "glass") {
+        let comp = Matter.Composite.create({ level: "bottom", label: "Structure", width: 1, height: 1 });
+        let top = Matter.Composites.stack(0, 0, 3, 1, GameObjects.BLOCK_SIZE, 0, (x, y) => {
+            return GameObjects.rect(x, y, 1, 1, texture);
+        });
+        let big = Matter.Composites.stack(0, GameObjects.BLOCK_SIZE, 1, 1, 0, 0, (x, y) => {
+            return GameObjects.rect(x, y, 5, 1, texture);
+        });
+        let small = Matter.Composites.stack(GameObjects.BLOCK_SIZE, 2 * GameObjects.BLOCK_SIZE, 1, 1, 0, 0, (x, y) => {
+            return GameObjects.rect(x, y, 3, 1, texture);
+        });
+        let squares = Matter.Composites.stack(0, 3 * GameObjects.BLOCK_SIZE, 2, 1, GameObjects.BLOCK_SIZE, 0, (x, y) => {
+            return GameObjects.rect(x, y, 2, 2, texture);
+        });
+        Matter.Composite.move(top, Matter.Composite.allBodies(top), comp);
+        Matter.Composite.move(big, Matter.Composite.allBodies(big), comp);
+        Matter.Composite.move(small, Matter.Composite.allBodies(small), comp);
+        Matter.Composite.move(squares, Matter.Composite.allBodies(squares), comp);
+        Matter.Composite.translate(comp, { x: x, y: y })
+        return comp
+    }
+
     static dualpillars(x = 0, y = 0, texture = "glass") {
         let comp = Matter.Composite.create({ level: "bottom", label: "Structure", width: 1, height: 1 });
         let vertical = Matter.Composites.stack(GameObjects.BLOCK_SIZE, 0, 2, 1, GameObjects.BLOCK_SIZE, 0, (x, y) => {
@@ -128,7 +168,7 @@ class Generator {
                 col.push(undefined);
             }
             for (let j = 0; j < rows; j++) {
-                let structs = [Generator.box, Generator.arch, Generator.doubleArch, Generator.doubleArch, Generator.tripillars];
+                let structs = [Generator.box, Generator.blob, Generator.blob2, Generator.arch, Generator.doubleArch, Generator.doubleArch, Generator.tripillars];
                 let rand1 = Math.floor(this.#next() * structs.length);
 
                 let textures = ["glass", "wood", "stone", "metal"];
