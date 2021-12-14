@@ -37,20 +37,6 @@ class Game {
 
         this.difficulty = 0;
 
-        this.statsCanvas = document.createElement("canvas");
-        this.statsCanvas.width = this.renderer.canvas.width;
-        this.statsCanvas.height = this.renderer.canvas.height / 4;
-        let ctx = this.statsCanvas.getContext("2d")
-        ctx.textAlign = "center"
-        ctx.font = `800% arial`
-        ctx.fillText("Press SPACE for a ball.", this.statsCanvas.width / 6, this.statsCanvas.height / 4)
-        this.statsCanvas.style = "position: absolute; left: 8px; top: 8px; z-index: 1;"
-
-
-        let div = document.body
-        div.appendChild(this.statsCanvas)
-
-
         //We save the previous velocity for every body within the game-world,
         //and remove all projectiles on sleep.
         Matter.Events.on(this.engine, 'beforeUpdate', (event) => {

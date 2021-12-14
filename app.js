@@ -1,12 +1,12 @@
 var game = new Game();
-addEventListener("keypress", (event) => {
-    if (event.key == " " && !game.slingShot.bodyB.velocityPrev) {
+document.getElementById("ballButton").addEventListener("click", (event) => {
+    if (!game.slingShot.bodyB.velocityPrev) {
         let equation = Equations.createProblem(game.difficulty);
         let ans = window.prompt(`${equation.string.substring(1, equation.string.length - 1)} = `);
         if (ans == equation.value) {
             Matter.Composite.add(game.engine.world, game.slingShot.bodyB);
             game.streaks++;
-            game.difficulty += Math.round(game.streaks/5);
+            game.difficulty += Math.round(game.streaks / 5);
         } else {
             let diff = 1 - 1 / (game.streaks + 2);
             game.difficulty *= diff;
@@ -16,6 +16,7 @@ addEventListener("keypress", (event) => {
     }
 })
 var audio = new Audio("sounds/Cloud Armada-TestSong.mp3");
+audio.loop = true;
 var counter = true;
 var button = document.querySelector("#musicButton");
 console.log(button);
