@@ -1,38 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CS 240 Final Project</title>
+    <title>Math Blocks</title>
     <link rel="stylesheet" href="style.css" />
-  </head>
+</head>
 
-  <body>
+<body>
     <div id="main">
-      <table id="mainTable">
-        <th class="header">Statistics</th>
-        <tr>
-          <td>High Score:</td>
-        </tr>
-        <tr>
-          <td>Highest Streak:</td>
-        </tr>
-        <tr>
-          <td>Total Damage:</td>
-        </tr>
-        <th class="header">Options</th>
-        <tr id="musicOptions">
-          <td>
-              Music:<button id="musicButton" onclick="playMusic()">▶</button>
-          </td>
-        </tr>
-        <tr align="center">
-          <td>
-            <button id="ballButton">Next Ball!</button>
-          </td>
-        </tr>
-      </table>
+        <h1>Math-Blocks</h1>
+        <table id="mainTable">
+            <th class="header">Statistics</th>
+            <tr>
+                <td>Streak:</td>
+                <td id="streak">0</td>
+            </tr>
+            <tr>
+                <td>Score:</td>
+                <td id="score">0</td>
+            </tr>
+            <tr>
+                <td>Damage:</td>
+                <td id="damage">0</td>
+            </tr>
+            <th class="header">Options</th>
+            <tr id="musicOptions">
+                <td>
+                    Music: <button id="musicButton" onclick="playMusic()">▶</button>
+                </td>
+            </tr>
+            <tr align="center">
+                <td>
+                    <button id="ballButton" onclick="ballPrompt()">Next Ball!</button>
+                    <button id="roundButton" onclick="game.skipRound()">
+                        Next Level!
+                    </button>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <script src="node_modules/matter-js/build/matter.js"></script>
@@ -41,5 +49,6 @@
     <script src="generator.js"></script>
     <script src="game.js"></script>
     <script src="app.js"></script>
-  </body>
+</body>
+
 </html>

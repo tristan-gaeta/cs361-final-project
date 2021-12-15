@@ -6,7 +6,7 @@
  * the game object is created. All of the items in a game's engine-world are created through static methods 
  * within the GameObjects class.
  */
-class Game {
+ class Game {
 
     /**
      * @constructor creates new instances of a Game object. The display canvas for
@@ -67,9 +67,9 @@ class Game {
                     if (body.shockAbsorbed > body.hp) {
                         new Audio(`sounds/sfx-pop${Matter.Common.choose(["", 3, 4, 5, 6])}.mp3`).play()
                         Matter.Composite.remove(event.source.world, body, true)
+                        game.updateDamage(body.hp / 1000);
                     }
                 } else if (body.label == "Projectile") {
-                    levelOver = false;
                     if (body.bounds.min.y > Generator.HEIGHT_RATIO * Generator.WORLD_SCALE || body.bounds.min.x > Generator.WIDTH_RATIO * Generator.WORLD_SCALE || body.bounds.max.x < 0) {
                         Matter.Composite.remove(event.source.world, body, true)
                     }
@@ -118,7 +118,32 @@ class Game {
         Matter.Composite.add(this.engine.world, comp);
         this.ground.render.sprite.texture = comp.ground;
         this.renderer.options.background = comp.background;
+        this.clearDamage();
     }
+
+    updateStreak(s) {
+        let streak = document.getElementById("streak");
+        streak.innerHTML = s;
+    }
+
+    updateScore(s) {
+        let score = document.getElementById("score");
+        let temp = Number(score.innerHTML);
+        score.innerHTML = s + temp;
+    }
+
+    updateDamage(s) {
+        let damage = document.getElementById("damage");
+        let temp = Number(damage.innerHTML);
+        damage.innerHTML = s + temp;
+        this.updateScore(s);
+    }
+
+    clearDamage() {
+        let damage = document.getElementById("damage");
+        damage.innerHTML = 0;
+    }
+
 
     /**
      * @description this method creates a renderer object and maximizes the canvas
@@ -134,7 +159,7 @@ class Game {
             bounds: Matter.Bounds.create([{ x: 0, y: 0 }, { x: Generator.WIDTH_RATIO * Generator.RENDER_SCALE, y: 0 }, { x: Generator.WIDTH_RATIO * Generator.RENDER_SCALE, y: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE }, { x: 0, y: Generator.HEIGHT_RATIO * Generator.RENDER_SCALE }]),
             hasBounds: true,
             options: {
-                background: "images/Backgrounds/forest-Background.png",
+                background: "images/Backgrounds/Forest-Background.png",
                 //showDebug: true,
                 showSleeping: false,
                 width: Generator.WIDTH_RATIO * Generator.RENDER_SCALE,

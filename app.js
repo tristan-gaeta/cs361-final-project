@@ -1,10 +1,16 @@
 var game = new Game();
-document.getElementById("ballButton").addEventListener("click", (event) => {
+addEventListener("keypress", (event) => {
+    if(event.key == " "){
+        ballPrompt();
+    }
+});
+
+function ballPrompt() {
     if (!game.slingShot.bodyB.velocityPrev) {
         let equation = Equations.createProblem(game.difficulty);
         let ans = window.prompt(`${equation.string.substring(1, equation.string.length - 1)} = `);
         if (ans == equation.value) {
-            Matter.Composite.add(game.engine.world, game.slingShot.bodyB);
+            Matter.Composite.add(game.engine.world.composites[0], game.slingShot.bodyB);
             game.streaks++;
             game.difficulty += Math.round(game.streaks / 5);
         } else {
@@ -12,38 +18,28 @@ document.getElementById("ballButton").addEventListener("click", (event) => {
             game.difficulty *= diff;
             game.difficulty = Math.floor(game.difficulty)
             game.streaks = 0;
+            game.updateScore(-1);
         }
-    }
-})
-document.addEventListener("keypress", (event) => {
-    if (event.key == " " && !game.slingShot.bodyB.velocityPrev) {
-        let equation = Equations.createProblem(game.difficulty);
-        let ans = window.prompt(`${equation.string.substring(1, equation.string.length - 1)} = `);
-        if (ans == equation.value) {
-            Matter.Composite.add(game.engine.world, game.slingShot.bodyB);
-            game.streaks++;
-            game.difficulty += Math.round(game.streaks / 5);
-        } else {
-            let diff = 1 - 1 / (game.streaks + 2);
-            game.difficulty *= diff;
-            game.difficulty = Math.floor(game.difficulty)
-            game.streaks = 0;
-        }
-    }
-})
-var audio = new Audio("sounds/Cloud Armada-TestSong.mp3");
-audio.loop = true;
-var counter = true;
-var button = document.querySelector("#musicButton");
-console.log(button);
-function playMusic() {
-    if (counter == true) {
-        audio.play()
-        button.innerHTML = "II"
-        counter = false;
-    } else {
-        audio.pause()
-        button.innerHTML = "▶"
-        counter = true
+        game.updateStreak(game.streaks);
     }
 }
+
+
+const songs = ["sounds/A Good Bass for Gambling.mp3","sounds/Hold on a Sec.mp3"];
+var song = 0;
+var audio = new Audio(songs[song]);
+var button = document.querySelector("#musicButton");
+function playMusic() {
+    if (audio.paused) {
+        audio.play();
+        button.innerHTML = "II";
+    } else {
+        audio.pause();
+        button.innerHTML = "▶";
+    }
+}
+audio.addEventListener("ended",()=>{
+    song = (song + 1) % songs.length;
+    audio.src = songs[song];
+    audio.play();
+});

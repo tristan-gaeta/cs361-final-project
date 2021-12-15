@@ -6,22 +6,29 @@ canvas {
   width: 80%;
   border: 2px  black solid;
 }
+h1{
+  color:goldenrod;
+  text-shadow: 2px 2px black;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 4.5vw;
+  margin: auto;
+}
 table {
   float: right;
-  width: 19%;
-  background-image: url(images/Material\ Texture/Wood/wood-Whole.png);
+  width: 18.5%;
+  background-image: url(images/Material\ Texture/Wood/Wood-Whole.png);
   align-items: center;
   color:goldenrod;
   text-shadow: 2px 2px black;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 1.5vw;
+  font-size: 2vw;
   border: 2px  black solid;
 }
 .header {
   font-size: 2vw;
 }
-
 button {
+  font-size: 1vw;
   align-self: center;
   color: white;
   background-image: url(images/Material\ Texture/Stone/Stone-Whole.png);

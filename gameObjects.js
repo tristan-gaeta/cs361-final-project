@@ -5,7 +5,7 @@
  * @description The GameObjects class contains static methods for creating game objects.
  *
  */
-class GameObjects {
+ class GameObjects {
   static _PRE_SHOT_COLLISION_FILTER = {
     group: 1,
     category: 0b0010,
@@ -52,16 +52,16 @@ class GameObjects {
   static rect(x, y, width, height, material) {
     let hp;
     switch (material) {
-      case "glass":
+      case "Glass":
         hp = 2000;
         break;
-      case "wood":
+      case "Wood":
         hp = 5000;
         break;
-      case "stone":
+      case "Stone":
         hp = 7000;
         break;
-      case "metal":
+      case "Metal":
         hp = 9000;
         break;
       default:
