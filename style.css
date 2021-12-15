@@ -18,7 +18,7 @@ table {
   width: 18.5%;
   background-image: url(images/Material\ Texture/Wood/Wood-Whole.png);
   align-items: center;
-  color:goldenrod;
+  color: goldenrod;
   text-shadow: 2px 2px black;
   font-family: 'Courier New', Courier, monospace;
   font-size: 2vw;
@@ -26,10 +26,10 @@ table {
 }
 .header {
   font-size: 2vw;
+  text-align: center;
 }
 button {
   font-size: 1vw;
-  align-self: center;
   color: white;
   background-image: url(images/Material\ Texture/Stone/Stone-Whole.png);
 }
