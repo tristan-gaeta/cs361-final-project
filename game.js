@@ -114,6 +114,7 @@
 
     skipRound() {
         Matter.Composite.remove(this.engine.world, this.engine.world.composites, true);
+        this.slingShot.bodyB.velocityPrev = undefined;
         let comp = this.generator.nextLevel();
         Matter.Composite.add(this.engine.world, comp);
         this.ground.render.sprite.texture = comp.ground;

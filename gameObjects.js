@@ -5,7 +5,7 @@
  * @description The GameObjects class contains static methods for creating game objects.
  *
  */
- class GameObjects {
+class GameObjects {
   static _PRE_SHOT_COLLISION_FILTER = {
     group: 1,
     category: 0b0010,
