@@ -115,15 +115,13 @@ class Equations {
      */
     static #getNumOperations(difficulty) {
         let relProbs = [(5.5052406699) * (0.8360327478 ** difficulty),
-        (1.395113849) * (0.9540410835 ** difficulty),
-        (1.5350523716) * (0.9660724834 ** difficulty),
-        (4.7938764614) * (0.9398111758 ** difficulty) + 0.3,
-        (15.3033683586) * (0.9391067309 ** difficulty) + 0.4285714285714286];
+                        (1.395113849) * (0.9540410835 ** difficulty),
+                        (1.5350523716) * (0.9660724834 ** difficulty),
+                        (4.7938764614) * (0.9398111758 ** difficulty) + 0.3,
+                        (15.3033683586) * (0.9391067309 ** difficulty) + 0.4285714285714286];
         let i = 1
         for (let prob of relProbs) {
-            if (Math.random() < prob) {
-                return i;
-            }
+            if (Math.random() < prob) break;
             i++;
         }
         return i;
@@ -139,16 +137,14 @@ class Equations {
      */
     static #getOperation(difficulty) {
         let relProbs = [(0.4764327549) * (0.9376634997 ** difficulty) + 0.2,
-        (0.9920879558) * (0.9504041538 ** difficulty) + 0.25,
-        (1.0050471319) * (0.9037075291 ** difficulty) + 0.375,
-        (4.4641050668) * (0.8914885938 ** difficulty) + 0.6,
-        (2.3237120811) * (0.9085801431 ** difficulty) + 0.666666666666];
+                        (0.9920879558) * (0.9504041538 ** difficulty) + 0.25,
+                        (1.0050471319) * (0.9037075291 ** difficulty) + 0.375,
+                        (4.4641050668) * (0.8914885938 ** difficulty) + 0.6,
+                        (2.3237120811) * (0.9085801431 ** difficulty) + 0.666666666666];
         let i = 0
         let ops = ["+", "-", "*", "/", "^", "√"]
         for (let prob of relProbs) {
-            if (Math.random() < prob) {
-                return ops[i];
-            }
+            if (Math.random() < prob) break;
             i++;
         }
         return ops[i];

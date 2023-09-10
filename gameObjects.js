@@ -202,8 +202,8 @@ class GameObjects {
           Matter.Vector.sub(constraint.bodyB.positionPrev, constraint.pointA)
         );
         if (
-          dist < constraint.bodyB.circleRadius &&
-          prevDist > constraint.bodyB.circleRadius
+          dist <= constraint.bodyB.circleRadius &&
+          prevDist >= constraint.bodyB.circleRadius
         ) {
           constraint.bodyB.collisionFilter =
             GameObjects._POST_SHOT_COLLISION_FILTER;
