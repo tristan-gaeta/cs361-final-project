@@ -1,4 +1,7 @@
 var game = new Game();
+
+window.alert(`Press [SPACE] or the "Next Ball!" Button to Launch a ball at the structures!`);
+        
 addEventListener("keypress", (event) => {
     if(event.key == " "){
         ballPrompt();
